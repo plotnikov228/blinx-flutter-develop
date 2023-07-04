@@ -89,7 +89,7 @@ dependencies:
     path: ./pubs/scroll_app_bar-2.0.0_updated/
   outline_gradient_button: ^2.0.0+1
   animated_toggle_switch: ^0.6.1
-  flutter_animate: ^4.1.0
+  flutter_animate: ^4.2.0
   flutter_phoenix: ^1.1.0
   fluttertoast: ^8.2.1
   amazon_cognito_identity_dart_2: ^3.3.0
