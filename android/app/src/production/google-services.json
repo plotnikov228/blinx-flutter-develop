@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "425375484686",
+    "project_id": "blinx-374523",
+    "storage_bucket": "blinx-374523.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:425375484686:android:6e7c1d247a22771eb4e55f",
+        "android_client_info": {
+          "package_name": "com.blinx.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "425375484686-q5jj9s7jor9g8kqoj5jcr1it2ja4t0kl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA6CtT1S0ONiR6hzrpvjLXy1yrS_griHsM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "425375484686-q5jj9s7jor9g8kqoj5jcr1it2ja4t0kl.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "425375484686-7r2bav4b8n3jh1cjqgbmkt0tpfbiedar.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.blinx.media"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

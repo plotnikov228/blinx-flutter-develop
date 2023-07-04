@@ -1,0 +1,82 @@
+{
+  "project_info": {
+    "project_number": "867980902803",
+    "project_id": "blinxdev-a5c6e",
+    "storage_bucket": "blinxdev-a5c6e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:867980902803:android:7579ff5bb5853ed036e866",
+        "android_client_info": {
+          "package_name": "com.blinx.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "867980902803-toimu4on1eo3agikc8j0c2d428d0a772.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBh66GMjSHSODSesZla1S2Zde6Yao4FDOY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "867980902803-toimu4on1eo3agikc8j0c2d428d0a772.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "867980902803-9bjt7sig8f1pakt305c8rsja4d7mabrg.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.blinx.media.staging"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:867980902803:android:2ae2530dc596cbbf36e866",
+        "android_client_info": {
+          "package_name": "com.blinx.media.staging"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "867980902803-toimu4on1eo3agikc8j0c2d428d0a772.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBh66GMjSHSODSesZla1S2Zde6Yao4FDOY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "867980902803-toimu4on1eo3agikc8j0c2d428d0a772.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "867980902803-9bjt7sig8f1pakt305c8rsja4d7mabrg.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.blinx.media.staging"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

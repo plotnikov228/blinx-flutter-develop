@@ -1,0 +1,180 @@
+name: blinx
+description: A new Flutter application.
+
+# The following line prevents the package from being accidentally published to
+# pub.dev using `pub publish`. This is preferred for private packages.
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+# The following defines the version and build number for your application.
+# A version number is three numbers separated by dots, like 1.2.43
+# followed by an optional build number separated by a +.
+# Both the version and the builder number may be overridden in flutter
+# build by specifying --build-name and --build-number, respectively.
+# In Android, build-name is used as versionName while build-number used as versionCode.
+# Read more about Android versioning at https://developer.android.com/studio/publish/versioning
+# In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
+# Read more about iOS versioning at
+# https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
+version: 1.2.2+2
+
+environment:
+  sdk: '>=2.17.0 <3.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # UI
+  cupertino_icons: ^1.0.4
+  flutter_svg: ^2.0.5
+  gradient_borders: ^1.0.0
+  gradient_ui_widgets:
+    path: ./pubs/gradient_ui_widgets-1.0.2-nullsafety_updated/
+  shimmer: ^2.0.0
+
+  # Localization
+  nstack:
+    git:
+      url: https://github.com/nstack-io/flutter-sdk.git
+      ref: v0.5.1
+
+  # Net
+  dio: ^4.0.6
+  pretty_dio_logger: ^1.1.1
+  jaguar_jwt: ^3.0.0
+
+  # Utility
+  device_info_plus: ^8.0.0
+  package_info_plus: ^3.0.2
+  auto_size_text: ^3.0.0
+  email_validator: ^2.1.17
+  flutter_localizations:
+    sdk: flutter
+  intl: any
+  jiffy: ^5.0.0
+  flutter_html: ^3.0.0-alpha.6
+  lottie: ^2.2.0
+  share_plus: ^6.3.0
+  age_calculator: ^1.0.0
+  url_launcher: ^6.1.10
+
+  # Persistence
+  shared_preferences: ^2.0.17
+  streaming_shared_preferences: ^2.0.0
+
+  # Architecture
+  freezed_annotation: ^2.2.0
+  json_annotation: ^4.8.0
+  retrofit: ^3.3.1
+  injectable: ^1.5.4
+  get_it: ^7.2.0
+  auto_route: ^5.0.4
+  flutter_bloc: ^8.0.1
+  rxdart: ^0.27.7
+
+  # Firebase
+  firebase_core: ^2.3.0
+  firebase_analytics: ^10.0.6
+  firebase_crashlytics: ^3.0.6
+  firebase_messaging: ^14.1.4
+
+  # Others
+  tuple: ^2.0.1
+  async: ^2.10.0
+  visibility_detector: ^0.3.3
+  cached_network_image: ^3.2.3
+  flutter_switch: ^0.3.2
+  timer_count_down: ^2.2.2
+  scroll_app_bar:
+    path: ./pubs/scroll_app_bar-2.0.0_updated/
+  outline_gradient_button: ^2.0.0+1
+  animated_toggle_switch: ^0.6.1
+  flutter_animate: ^4.1.0
+  flutter_phoenix: ^1.1.0
+  fluttertoast: ^8.2.1
+  amazon_cognito_identity_dart_2: ^3.3.0
+  otp_text_field: ^1.1.3
+  flutter_staggered_grid_view: ^0.4.0
+  webview_flutter: ^4.2.0
+  video_player: ^2.5.3
+  wakelock: ^0.6.2
+  device_info: ^2.0.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  build_runner: ^2.3.3
+  injectable_generator: ^1.5.5
+  retrofit_generator: ^4.2.0
+  freezed: ^2.3.2
+  json_serializable: ^6.6.1
+  auto_route_generator: ^5.0.2
+  flutter_lints: ^2.0.1
+  flutter_gen_runner: ^5.3.0
+  cached_video_player: ^2.0.4
+  flutter_widget_from_html: ^0.10.0
+# For information on the generic Dart part of this file, see the
+# following page: https://dart.dev/tools/pub/pubspec
+
+flutter_gen:
+  integrations:
+    flutter_svg: true
+
+# The following section is specific to Flutter.
+flutter:
+  # The following line ensures that the Material Icons font is
+  # included with your application, so that you can use the icons in
+  # the material Icons class.
+  uses-material-design: true
+
+  # To add assets to your application, add an assets section, like this:
+  assets:
+    - assets/icons/
+    - assets/images/
+    - assets/lottie/
+
+  fonts:
+    - family: blinxlg
+      fonts:
+        - asset: assets/fonts/blinxlg.otf
+    - family: BlinxBoutros
+      fonts:
+        - asset: assets/fonts/BlinxBoutros-Light.otf
+        - asset: assets/fonts/BlinxBoutros-Medium.otf
+        - asset: assets/fonts/BlinxBoutros-ExtraBold.otf
+    - family: Roboto
+      fonts:
+        - asset: assets/fonts/Roboto-Black.ttf
+          weight: 900
+        - asset: assets/fonts/Roboto-BlackItalic.ttf
+          weight: 900
+          style: italic
+        - asset: assets/fonts/Roboto-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/Roboto-BoldItalic.ttf
+          weight: 700
+          style: italic
+        - asset: assets/fonts/Roboto-Italic.ttf
+          weight: 400
+          style: italic
+        - asset: assets/fonts/Roboto-Light.ttf
+          weight: 300
+        - asset: assets/fonts/Roboto-LightItalic.ttf
+          weight: 300
+          style: italic
+        - asset: assets/fonts/Roboto-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Roboto-MediumItalic.ttf
+          weight: 500
+          style: italic
+        - asset: assets/fonts/Roboto-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Roboto-Thin.ttf
+          weight: 100
+        - asset: assets/fonts/Roboto-ThinItalic.ttf
+          weight: 100
+          style: italic
+
+  # For details regarding fonts from package dependencies,
+  # see https://flutter.dev/custom-fonts/#from-packages
+
