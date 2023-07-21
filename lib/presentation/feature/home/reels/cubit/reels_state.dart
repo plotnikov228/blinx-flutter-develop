@@ -6,7 +6,10 @@ class ReelsState with _$ReelsState {
 
   const factory ReelsState({
     @Default(BaseStatus.initial()) BaseStatus status,
-    @Default([]) List<Article> reelsList,
+    @Default(1) int currentRowIndex,
+    @Default(1) int currentColumnIndex,
+    @Default([[],[],[]]) List<List<PaginatedReels?>?> matrix,
+    @Default([[[]],[[]],[[]],]) List<List<List<ReelsRowType>?>?> reelsRowMatrix,
     @Default(0) int currentPage,
     @Default(0) int total,
     @Default(null) Article? selectedArticle,

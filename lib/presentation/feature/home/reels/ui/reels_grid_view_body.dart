@@ -3,11 +3,17 @@ import 'package:blinx/presentation/common/base_status/base_status.dart';
 import 'package:blinx/presentation/feature/home/cubit/home_ab_cubit.dart';
 import 'package:blinx/presentation/feature/home/reels/cubit/reels_cubit.dart';
 import 'package:blinx/presentation/feature/home/reels/ui/reels_grid_view.dart';
+import 'package:blinx/presentation/feature/home/reels/ui/reels_row.dart';
 import 'package:blinx/presentation/feature/home/reels_details/reels_details_screen.dart';
 import 'package:blinx/presentation/widgets/app_pagination_wrapper.dart';
 import 'package:blinx/presentation/widgets/snackbar/app_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../../../../domain/entities/paginated_list/paginated_reels.dart';
+import '../../../../../injection/injector.dart';
+import 'gesture_controlled_grid/gesture_controlled_grid_widget.dart';
+import 'new_reels_grid_view.dart';
 
 class ReelsGridViewBody extends StatelessWidget {
   const ReelsGridViewBody({
@@ -17,42 +23,81 @@ class ReelsGridViewBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<ReelsCubit, ReelsState>(
-      listenWhen: (previous, current) => current.status.isFailure,
-      listener: (context, state) {
-        state.status.whenOrNull(
-          failure: (error) => AppSnackBar.showErrorMessage(
-            context,
-            title: error.getErrorMessage(context),
-          ),
-        );
-      },
-      builder: (context, state) {
-        final reelsList = state.reelsList; // видео
-
-        if (state.selectedArticle != null) { // как то сюда внедрить анимацию приближения видео
-          context.read<HomeAbCubit>().update(false);
-          return ReelsDetailsScreen(
-            reelsList,
-            selectedArticle: state.selectedArticle!,
-            doPop: false,
-          );
-        } else {
-          if (state.shouldShowShimmer) {
-            return ReelsGridView.showShimmer();
-          }
-          return AppPaginationWrapper(
-            isRefreshIndicatorEnabled: false,
-            onRefresh: () async {
-              context.read<ReelsCubit>().loadReels(showShimmer: true);
-            },
-            showPaginationLoader: state.status.isLazyLoading,
-            onLoadMore: context.read<ReelsCubit>().loadMoreReels,
-            child: ReelsGridView(
-              reelsList: reelsList,
+        listenWhen: (previous, current) => current.status.isFailure,
+        listener: (context, state) {
+          state.status.whenOrNull(
+            failure: (error) => AppSnackBar.showErrorMessage(
+              context,
+              title: error.getErrorMessage(context),
             ),
           );
+        },
+        builder: (context, state) {
+          final cubit = context.read<ReelsCubit>();
+          final widgetMatrix =
+              _getWidgetMatrix<PaginatedReels>(state.matrix, (i, j) {
+            var _i = i;
+            if (state.reelsRowMatrix.length <= i) {
+              _i = state.reelsRowMatrix.length - 1;
+            }
+            return state.matrix.isEmpty
+                ? NewReelsGridView.showShimmer()
+                : NewReelsGridView(
+                    reelsList: state.matrix[_i]![j]?.reelsList,
+                    reelsRowType: (state.reelsRowMatrix[_i]!)[j]);
+          });
+          if (state.status.isLoading) {
+            return NewReelsGridView.showShimmer();
+          }
+
+          return GestureControlledGridWidget(
+            widgetMatrix: widgetMatrix,
+            rowIndex: state.currentRowIndex,
+            columnIndex: state.currentColumnIndex,
+            onBottomSwipe: () {
+              cubit.swipeTracking(bottom: true);
+            },
+            onTopSwipe: () {
+              cubit.swipeTracking(top: true);
+            },
+            onLeftSwipe: () {
+              cubit.swipeTracking(left: true);
+            },
+            onRightSwipe: () {
+              cubit.swipeTracking(right: true);
+            },
+            onLeftTopSwipe: () {
+              cubit.swipeTracking(topLeft: true);
+            },
+            onLeftBottomSwipe: () {
+              cubit.swipeTracking(bottomLeft: true);
+            },
+            onRightTopSwipe: () {
+              cubit.swipeTracking(topRight: true);
+            },
+            onRightBottomSwipe: () {
+              cubit.swipeTracking(bottomRight: true);
+            },
+            onSwipe: (int row, int column) {
+              cubit.swipeTracking(rowIndex: row, columnIndex: column);
+            },
+          );
         }
-      },
-    );
+        //},
+        );
+  }
+
+  List<List<Widget>> _getWidgetMatrix<T>(
+      List<List<T?>?> matrix, Widget Function(int, int) item) {
+    final widgetMatrix = <List<Widget>>[];
+
+    for (var i = 0; i < matrix.length; i++) {
+      widgetMatrix.add([]);
+      for (var j = 0; j < matrix[i]!.length; j++) {
+        widgetMatrix[i].add(item(i, j));
+      }
+    }
+
+    return widgetMatrix;
   }
 }

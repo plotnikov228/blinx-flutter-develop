@@ -25,18 +25,28 @@ class ReelsCard extends StatelessWidget { // карточка видео
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(squared ? 0 : 12.0),
-      child: Stack(
-        fit: StackFit.expand,
-        alignment: Alignment.center,
-        children: [
-          isLoading ? const ShimmerBox() : playingVideo ? ReelsPreviewCard(article: article,): AppNetworkImage(imageUrl: imageUrl),
-          IconButton(
-            onPressed: onPlayIconTap,
-            icon: Assets.icons.play.svg(color: context.colors.white),
+    return IgnorePointer(
+      ignoring: isLoading,
+        child: Hero(
+          tag: article.path,
+          child:  Card(
+            color: Colors.transparent,
+            margin: const EdgeInsets.all(1),
+            elevation: 0, child: ClipRRect(
+            borderRadius: BorderRadius.circular(squared ? 0 : 12.0),
+            child: Stack(
+              fit: StackFit.expand,
+              alignment: Alignment.center,
+              children: [
+                isLoading ? const ShimmerBox() /*: playingVideo ? ReelsPreviewCard(article: article)*/ : AppNetworkImage(imageUrl: imageUrl),
+                IconButton(
+                  onPressed: onPlayIconTap,
+                  icon: Assets.icons.play.svg(color: context.colors.white),
+                ),
+              ],
+            ),
           ),
-        ],
+        ),
       ),
     );
   }

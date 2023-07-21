@@ -15,10 +15,20 @@ class NewReelsGridView extends StatefulWidget {
     required this.reelsRowType,
   }) : super(key: key);
 
-  final List<Article> reelsList;
+  final List<Article>? reelsList;
   final bool isInLoadingState;
   final bool isStoryTellerProfile;
-  final List<ReelsRowType> reelsRowType;
+  final List<ReelsRowType>? reelsRowType;
+
+  factory NewReelsGridView.showShimmer() {
+    return NewReelsGridView(
+      isInLoadingState: true,
+      reelsList: List.generate(
+        10,
+            (_) => Article.simple(''),
+      ), reelsRowType: [ReelsRowType.Red, ReelsRowType.Blue, ReelsRowType.Green],
+    );
+  }
 
   @override
   State<NewReelsGridView> createState() => _NewReelsGridViewState();
@@ -28,154 +38,191 @@ class _NewReelsGridViewState extends State<NewReelsGridView>
     with AutomaticKeepAliveClientMixin<NewReelsGridView> {
   @override
   Widget build(BuildContext context) {
+
+    var reelsRowType = widget.reelsRowType;
+    if((reelsRowType ?? []).isEmpty || reelsRowType == null) {
+      reelsRowType= [ReelsRowType.Red, ReelsRowType.Blue, ReelsRowType.Green];
+    }
+
+
     final size = MediaQuery.of(context).size;
     super.build(context);
-    return Wrap(
-      direction: Axis.vertical,
-      spacing: 10,
-      children: widget.reelsRowType.map((e) => _reelsRowInWidget(e)).toList(),
+    if((widget.reelsList ?? []).isEmpty) {
+      return NewReelsGridView.showShimmer();
+    }
+    return SizedBox(
+      height: size.height,
+      child: SingleChildScrollView(
+        physics: NeverScrollableScrollPhysics(),
+        child: Column(
+          children: (reelsRowType)!.map((e) => _reelsRowInWidget(e, size)).toList(),
+        ),
+      ),
     );
   }
 
-  Widget _reelsRowInWidget(ReelsRowType type) {
+
+  Widget _reelsRowInWidget(ReelsRowType type, Size size) {
+    final unitOfHeight = ((size.height -100)/ 8);
+    double width(int cardsCount) => (size.width);
     switch (type) {
       case ReelsRowType.Red:
-        final reelsList = widget.reelsList.getRange(0, 2).toList();
-        return Expanded(
-          flex: 4,
-          child: Wrap(
-            spacing: 10,
+        final reelsList = widget.reelsList!.getRange(0, 3).toList();
+        final height = unitOfHeight * 4;
+        return SizedBox(
+          height: height,
+          width: width(2),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              Expanded(
-                child: Wrap(
-                  direction: Axis.vertical,
-                  spacing: 10,
+              SizedBox(
+                width: width(2) / 3,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    Expanded(
-                        child: ReelsCard(
-                      imageUrl: reelsList[0].mobileBlinx,
-                      isLoading: widget.isInLoadingState,
-                      squared: widget.isStoryTellerProfile,
-                      onPlayIconTap: () {
-                        context.read<ReelsCubit>().update(reelsList[0]);
-                      }, article: reelsList[0]
-                    )),
-                    Expanded(
-                        child: ReelsCard(
-                      imageUrl: reelsList[1].mobileBlinx,
-                      isLoading: widget.isInLoadingState,
-                      squared: widget.isStoryTellerProfile,
-                      onPlayIconTap: () {
-                        context.read<ReelsCubit>().update(reelsList[1]);
-                      }, article: reelsList[1],
-                    ))
+                    SizedBox(
+                      height: height / 2,
+                      child: ReelsCard(
+                        imageUrl: reelsList[0].mobileBlinx,
+                        isLoading: widget.isInLoadingState,
+                        squared: widget.isStoryTellerProfile,
+                        onPlayIconTap: () {
+                      context.read<ReelsCubit>().update(reelsList[0], context, heroTag: reelsList[0].path);
+                        }, article: reelsList[0]
+                      ),
+                    ),
+                    SizedBox(
+                      height: height / 2,
+                      child: ReelsCard(
+                        imageUrl: reelsList[1].mobileBlinx,
+                        isLoading: widget.isInLoadingState,
+                        squared: widget.isStoryTellerProfile,
+                        onPlayIconTap: () {
+                      context.read<ReelsCubit>().update(reelsList[1], context, heroTag: reelsList[1].path);
+                        }, article: reelsList[1],
+                      ),
+                    )
                   ],
                 ),
               ),
-              Expanded(
-                  flex: 3,
-                  child: ReelsCard(
-                    imageUrl: reelsList[2].mobileBlinx,
-                    isLoading: widget.isInLoadingState,
-                    squared: widget.isStoryTellerProfile,
-                    onPlayIconTap: () {
-                      context.read<ReelsCubit>().update(reelsList[2]);
-                    },article: reelsList[2], playingVideo: true,
-                  ))
+              SizedBox(width: (width(2) / 3) * 2,
+                child: ReelsCard(
+                  imageUrl: reelsList[2].mobileBlinx,
+                  isLoading: widget.isInLoadingState,
+                  squared: widget.isStoryTellerProfile,
+                  onPlayIconTap: () {
+                    context.read<ReelsCubit>().update(reelsList[2], context, heroTag: reelsList[2].path);
+                  },article: reelsList[2], playingVideo: true,
+                ),
+              )
             ],
           ),
         );
       case ReelsRowType.Blue:
-        final reelsList = widget.reelsList.getRange(3, 6).toList();
-        return Expanded(
-          flex: 3,
-          child: Wrap(
-            spacing: 10,
+        final reelsList = widget.reelsList!.getRange(3, 7).toList();
+        final height = unitOfHeight * 3;
+        return SizedBox(
+          height: height,
+          width: width(2),
+
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              Expanded(
-                child: Wrap(
-                  direction: Axis.vertical,
-                  spacing: 10,
+              SizedBox(
+                width: width(2)/2,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    Expanded(
+                    SizedBox(
+                      height: height / 2,
                         child: ReelsCard(
                       imageUrl: reelsList[0].mobileBlinx,
                       isLoading: widget.isInLoadingState,
                       squared: widget.isStoryTellerProfile,
                       onPlayIconTap: () {
-                        context.read<ReelsCubit>().update(reelsList[0]);
+                        context.read<ReelsCubit>().update(reelsList[0], context, heroTag: reelsList[0].path);
                       },article: reelsList[0]
                     )),
-                    Expanded(
-                        child: Wrap(
-                          spacing: 10,
+                    SizedBox(height:  height /2,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        ReelsCard(
-                          imageUrl: reelsList[1].mobileBlinx,
-                          isLoading: widget.isInLoadingState,
-                          squared: widget.isStoryTellerProfile,
-                          onPlayIconTap: () {
-                            context.read<ReelsCubit>().update(reelsList[1]);
-                          },article: reelsList[1]
+                        SizedBox(
+                          width: width(2)/4,
+                          child: ReelsCard(
+                            imageUrl: reelsList[1].mobileBlinx,
+                            isLoading: widget.isInLoadingState,
+                            squared: widget.isStoryTellerProfile,
+                            onPlayIconTap: () {
+                              context.read<ReelsCubit>().update(reelsList[1], context, heroTag: reelsList[1].path);
+                            },article: reelsList[1]
+                          ),
                         ),
-                        ReelsCard(
-                          imageUrl: reelsList[2].mobileBlinx,
-                          isLoading: widget.isInLoadingState,
-                          squared: widget.isStoryTellerProfile,
-                          onPlayIconTap: () {
-                            context.read<ReelsCubit>().update(reelsList[2]);
-                          },article: reelsList[2]
+                        SizedBox(
+                          width: width(2)/4,
+                          child: ReelsCard(
+                            imageUrl: reelsList[2].mobileBlinx,
+                            isLoading: widget.isInLoadingState,
+                            squared: widget.isStoryTellerProfile,
+                            onPlayIconTap: () {
+                              context.read<ReelsCubit>().update(reelsList[2], context, heroTag: reelsList[2].path);
+                            },article: reelsList[2]
+                          ),
                         ),
                       ],
                     ))
                   ],
                 ),
               ),
-              Expanded(
+              SizedBox(
+                width: width(3) /2,
                   child: ReelsCard(
                 imageUrl: reelsList[3].mobileBlinx,
                 isLoading: widget.isInLoadingState,
                 squared: widget.isStoryTellerProfile,
                 onPlayIconTap: () {
-                  context.read<ReelsCubit>().update(reelsList[3]);
+                  context.read<ReelsCubit>().update(reelsList[3], context, heroTag: reelsList[3].path);
                 },article: reelsList[3], playingVideo: true,
               ))
             ],
           ),
         );
       case ReelsRowType.Green:
-        final reelsList = widget.reelsList.getRange(7, 9).toList();
-        return Expanded(
-          flex: 1,
-          child: Wrap(
-            spacing: 10,
+        final reelsList = widget.reelsList!.getRange(7, 10).toList();
+        return SizedBox(
+          height: unitOfHeight * 1.5,
+          width: width(3),
+          child: Row(
             children: [
-              Expanded(
+              SizedBox(
+                width: width(3) / 4,
                   child: ReelsCard(
                 imageUrl: reelsList[0].mobileBlinx,
                 isLoading: widget.isInLoadingState,
                 squared: widget.isStoryTellerProfile,
                 onPlayIconTap: () {
-                  context.read<ReelsCubit>().update(reelsList[0]);
+                  context.read<ReelsCubit>().update(reelsList[0], context, heroTag: reelsList[0].path);
+
                 },article: reelsList[0]
               )),
-              Expanded(
-                  flex: 2,
+              SizedBox(
+                width: width(3) / 2,
                   child: ReelsCard(
                     imageUrl: reelsList[1].mobileBlinx,
                     isLoading: widget.isInLoadingState,
                     squared: widget.isStoryTellerProfile,
                     onPlayIconTap: () {
-                      context.read<ReelsCubit>().update(reelsList[1]);
+                      context.read<ReelsCubit>().update(reelsList[1], context, heroTag: reelsList[1].path);
                     },article: reelsList[1]
                   )),
-              Expanded(
+              SizedBox(
+                  width: width(3) / 4,
                   child: ReelsCard(
                     imageUrl: reelsList[2].mobileBlinx,
                     isLoading: widget.isInLoadingState,
                     squared: widget.isStoryTellerProfile,
                     onPlayIconTap: () {
-                      context.read<ReelsCubit>().update(reelsList[2]);
+                      context.read<ReelsCubit>().update(reelsList[2], context, heroTag: reelsList[2].path);
                     }, playingVideo: true,article: reelsList[2]
                   ))
             ],

@@ -18,7 +18,13 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$ReelsState {
   BaseStatus<dynamic> get status => throw _privateConstructorUsedError;
   List<Article> get reelsList => throw _privateConstructorUsedError;
+  int get currentRowIndex => throw _privateConstructorUsedError;
+  int get currentColumnIndex => throw _privateConstructorUsedError;
+  List<List<PaginatedReels?>?> get matrix => throw _privateConstructorUsedError;
+  List<List<List<ReelsRowType>?>?> get reelsRowMatrix => throw _privateConstructorUsedError;
+
   int get currentPage => throw _privateConstructorUsedError;
+
   int get total => throw _privateConstructorUsedError;
   Article? get selectedArticle => throw _privateConstructorUsedError;
 
@@ -36,7 +42,12 @@ abstract class $ReelsStateCopyWith<$Res> {
   $Res call(
       {BaseStatus<dynamic> status,
       List<Article> reelsList,
-      int currentPage,
+        int currentRowIndex,
+        int currentColumnIndex,
+        List<List<PaginatedReels?>?> matrix,
+        List<List<List<ReelsRowType>?>?> reelsRowMatrix,
+
+        int currentPage,
       int total,
       Article? selectedArticle});
 
@@ -59,6 +70,10 @@ class _$ReelsStateCopyWithImpl<$Res, $Val extends ReelsState>
   $Res call({
     Object? status = null,
     Object? reelsList = null,
+    Object? currentRowIndex,
+    Object? currentColumnIndex,
+    Object? matrix,
+    Object? reelsRowMatrix,
     Object? currentPage = null,
     Object? total = null,
     Object? selectedArticle = freezed,
@@ -72,6 +87,22 @@ class _$ReelsStateCopyWithImpl<$Res, $Val extends ReelsState>
           ? _value.reelsList
           : reelsList // ignore: cast_nullable_to_non_nullable
               as List<Article>,
+      currentRowIndex: null == currentRowIndex
+    ? _value.currentRowIndex
+        : currentColumnIndex // ignore: cast_nullable_to_non_nullable
+    as int,
+      currentColumnIndex:null == currentColumnIndex
+          ? _value.currentColumnIndex
+          : currentColumnIndex // ignore: cast_nullable_to_non_nullable
+      as int,
+      matrix: null == matrix
+    ? _value.matrix
+        : matrix // ignore: cast_nullable_to_non_nullable
+      as List<List<PaginatedReels?>?>,
+      reelsRowMatrix: null == reelsRowMatrix
+          ? _value.reelsRowMatrix
+          : reelsRowMatrix // ignore: cast_nullable_to_non_nullable
+      as List<List<List<ReelsRowType>?>?>,
       currentPage: null == currentPage
           ? _value.currentPage
           : currentPage // ignore: cast_nullable_to_non_nullable
@@ -119,7 +150,12 @@ abstract class _$$_ReelsStateCopyWith<$Res>
   $Res call(
       {BaseStatus<dynamic> status,
       List<Article> reelsList,
-      int currentPage,
+        int currentRowIndex,
+        int currentColumnIndex,
+        List<List<PaginatedReels?>?> matrix,
+        List<List<List<ReelsRowType>?>?> reelsRowMatrix,
+
+        int currentPage,
       int total,
       Article? selectedArticle});
 
@@ -143,6 +179,10 @@ class __$$_ReelsStateCopyWithImpl<$Res>
     Object? status = null,
     Object? reelsList = null,
     Object? currentPage = null,
+    Object? currentRowIndex,
+    Object? currentColumnIndex,
+    Object? matrix,
+    Object? reelsRowMatrix,
     Object? total = null,
     Object? selectedArticle = freezed,
   }) {
@@ -151,10 +191,22 @@ class __$$_ReelsStateCopyWithImpl<$Res>
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
               as BaseStatus<dynamic>,
-      reelsList: null == reelsList
-          ? _value._reelsList
-          : reelsList // ignore: cast_nullable_to_non_nullable
-              as List<Article>,
+      currentRowIndex: null == currentRowIndex
+          ? _value.currentRowIndex
+          : currentColumnIndex // ignore: cast_nullable_to_non_nullable
+      as int,
+      currentColumnIndex:null == currentColumnIndex
+          ? _value.currentColumnIndex
+          : currentColumnIndex // ignore: cast_nullable_to_non_nullable
+      as int,
+      matrix: null == matrix
+          ? _value.matrix
+          : matrix // ignore: cast_nullable_to_non_nullable
+      as List<List<PaginatedReels?>?>,
+      reelsRowMatrix: null == reelsRowMatrix
+          ? _value.reelsRowMatrix
+          : reelsRowMatrix // ignore: cast_nullable_to_non_nullable
+      as List<List<List<ReelsRowType>?>?>,
       currentPage: null == currentPage
           ? _value.currentPage
           : currentPage // ignore: cast_nullable_to_non_nullable
@@ -178,6 +230,10 @@ class _$_ReelsState extends _ReelsState {
       {this.status = const BaseStatus.initial(),
       final List<Article> reelsList = const [],
       this.currentPage = 0,
+        this.currentRowIndex = 1,
+        this.currentColumnIndex = 1,
+        this.matrix = const [[]],
+        this.reelsRowMatrix = const [[[]]],
       this.total = 0,
       this.selectedArticle = null})
       : _reelsList = reelsList,
@@ -194,7 +250,18 @@ class _$_ReelsState extends _ReelsState {
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_reelsList);
   }
-
+  @override
+  @JsonKey()
+  final int currentRowIndex;
+  @override
+  @JsonKey()
+  final int currentColumnIndex;
+  @override
+  @JsonKey()
+  final List<List<PaginatedReels?>?> matrix;
+  @override
+  @JsonKey()
+  final List<List<List<ReelsRowType>?>?> reelsRowMatrix;
   @override
   @JsonKey()
   final int currentPage;
@@ -246,7 +313,12 @@ abstract class _ReelsState extends ReelsState {
       {final BaseStatus<dynamic> status,
       final List<Article> reelsList,
       final int currentPage,
-      final int total,
+        final int currentRowIndex,
+        final int currentColumnIndex,
+        final List<List<PaginatedReels?>?> matrix,
+        final List<List<List<ReelsRowType>?>?> reelsRowMatrix,
+
+        final int total,
       final Article? selectedArticle}) = _$_ReelsState;
   const _ReelsState._() : super._();
 
@@ -256,6 +328,14 @@ abstract class _ReelsState extends ReelsState {
   List<Article> get reelsList;
   @override
   int get currentPage;
+  @override
+   int get currentRowIndex;
+  @override
+   int get currentColumnIndex;
+  @override
+   List<List<PaginatedReels?>?> get matrix;
+  @override
+  List<List<List<ReelsRowType>?>?> get reelsRowMatrix;
   @override
   int get total;
   @override

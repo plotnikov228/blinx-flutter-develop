@@ -76,13 +76,13 @@ class _HomeScreenState extends State<HomeScreen> {
         resizeToAvoidBottomInset: false,
         appBarBuilder: state.showAb
             ? (_, tabsRouter) {
-                if (tabsRouter.activeIndex == 3) {
+                if (tabsRouter.activeIndex == 3 || tabsRouter.activeIndex == 1) {
                   return const PreferredSize(
                     preferredSize: Size.zero,
                     child: SizedBox.shrink(),
                   );
                 }
-                return BlinxAppBar.home();
+                return BlinxAppBar.home(backgroundColor: Colors.transparent,);
               }
             : null,
         routes: const [
@@ -102,7 +102,7 @@ class _HomeScreenState extends State<HomeScreen> {
             selectedLabelStyle: AppTextStyles.bodySmall,
             unselectedLabelStyle: AppTextStyles.bodySmall,
             onTap: (index) {
-              context.read<ReelsCubit>().update(null);
+              context.read<ReelsCubit>().update(null, context);
               context.read<HomeAbCubit>().update(true);
               _onItemTap(index, tabsRouter);
             },
