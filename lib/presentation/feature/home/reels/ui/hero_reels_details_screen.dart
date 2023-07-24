@@ -34,13 +34,15 @@ class _HeroReelsDetailsScreenState extends State<HeroReelsDetailsScreen> {
           onHorizontalDragEnd: (DragEndDetails details) {
             if (details.velocity.pixelsPerSecond.dx > 0) {
               Navigator.pop(context);
-              print('Свайп слева направо');
             }
           },
-          child: ReelsDetailsScreen(
-            widget.listReels,
-            selectedArticle: widget.article,
-            doPop: true,
+          child: Hero(
+            tag: widget.article.path,
+            child: ReelsDetailsScreen(
+              widget.listReels,
+              selectedArticle: widget.article,
+              doPop: true,
+            ),
           ),
         );
       });
