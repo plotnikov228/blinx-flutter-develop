@@ -88,7 +88,7 @@ dependencies:
   scroll_app_bar:
     path: ./pubs/scroll_app_bar-2.0.0_updated/
   outline_gradient_button: ^2.0.0+1
-  animated_toggle_switch: ^0.6.1
+  animated_toggle_switch: ^0.7.0
   flutter_animate: ^4.1.0
   flutter_phoenix: ^1.1.0
   fluttertoast: ^8.2.1
