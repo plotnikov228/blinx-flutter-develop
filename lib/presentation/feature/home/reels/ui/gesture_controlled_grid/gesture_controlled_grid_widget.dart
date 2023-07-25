@@ -57,14 +57,6 @@ class _GestureControlledGridWidgetState
     widget.vpControllerMatrix[widget.rowIndex]![widget.columnIndex]!.play();
     _animationController = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 200));
-    horizontalController = InfinityPageController(
-        initialPage: widget.columnIndex,
-        keepPage: false,
-        itemCount: widget.widgetMatrix[0].length);
-    verticalController = InfinityPageController(
-        initialPage: widget.rowIndex,
-        keepPage: false,
-        itemCount: widget.widgetMatrix.length);
     _animation = Tween<double>(
       begin: 1.0,
       end: 1.3,
@@ -78,44 +70,31 @@ class _GestureControlledGridWidgetState
 
   late AnimationController _animationController;
   late Animation<double> _animation;
-  bool canSwipe = true;
 
   @override
   Widget build(BuildContext context) {
+    horizontalController = InfinityPageController(
+        initialPage: column!,
+        itemCount: widget.widgetMatrix[0].length);
+    verticalController = InfinityPageController(
+        initialPage: row!,
+        itemCount: widget.widgetMatrix.length);
     final cubit = context.read<ReelsCubit>();
     final size = MediaQuery.of(context).size;
     final pageViews = List<Widget>.generate(
         widget.widgetMatrix.length,
         (index) => PageViewItem(
-            canSwipe: canSwipe,
             widgetMatrix: widget.widgetMatrix[index],
             controller: horizontalController,
             onPageChanged: (int page) async {
-              try {
-                await widget.vpControllerMatrix[row!]![column!]!.pause();
-                await widget.vpControllerMatrix[row!]![column!]!.dispose();
-                widget.vpControllerMatrix[row!]![column!] = null;
-              } catch(_ ) {
 
-              }
               await _animationController
                   .forward()
                   .then((value) => _animationController.reverse());
               row ??= widget.rowIndex;
-              column = page % widget.widgetMatrix[row!].length;
+              column = page;
               widget.onSwipe(row!, column!);
-              try {
-                if (widget.vpControllerMatrix[row!]![column!] == null) {
-                  widget.vpControllerMatrix[row!]![column!] =
-                      cubit.addVP(row!, column!);
-                } else if (widget.vpControllerMatrix[row!]![column!]!.value.isInitialized) {
-                  widget.vpControllerMatrix[row!]![column!] =
-                      cubit.addVP(row!, column!);
-                }
-                await widget.vpControllerMatrix[row!]![column!]!.play();
-              } catch (_) {
 
-              }
               //_setPreviewVideoInWidget();
               setState(() {});
               print('page indexes was changed on $row and $column');
@@ -132,26 +111,15 @@ class _GestureControlledGridWidgetState
               widgetMatrix: pageViews,
               controller: verticalController,
               onPageChanged: (page) async {
-                try {
-                  await widget.vpControllerMatrix[row!]![column!]!.pause();
-                  await widget.vpControllerMatrix[row!]![column!]!.dispose();
-                  widget.vpControllerMatrix[row!]![column!] = null;
-                } catch (_) {}
+
                 await _animationController
                     .forward()
                     .then((value) => _animationController.reverse());
                 column ??= widget.columnIndex;
 
-                row = page % widget.widgetMatrix.length;
+                row = page;
 
                 widget.onSwipe(row!, column!);
-                try {
-                  if (widget.vpControllerMatrix[row!]![column!] == null) {
-                    widget.vpControllerMatrix[row!]![column!] =
-                        cubit.addVP(row!, column!);
-                  }
-                  await widget.vpControllerMatrix[row!]![column!]!.play();
-                } catch (_) {}
                 setState(() {});
                 print('page indexes was changed on $row and $column');
               },

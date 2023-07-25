@@ -14,6 +14,6 @@ InfinityPageView PageViewItem(
     controller: controller,
     onPageChanged: onPageChanged,
     itemBuilder: (context, index) {
-      return widgetMatrix[index % widgetMatrix.length];
+      return widgetMatrix[index];
     }, itemCount: controller.itemCount,);
 }

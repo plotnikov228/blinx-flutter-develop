@@ -9,6 +9,7 @@ import 'package:blinx/presentation/widgets/app_pagination_wrapper.dart';
 import 'package:blinx/presentation/widgets/snackbar/app_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:video_player/video_player.dart';
 
 import '../../../../../domain/entities/paginated_list/paginated_reels.dart';
 import '../../../../../injection/injector.dart';
@@ -41,6 +42,7 @@ class ReelsGridViewBody extends StatelessWidget {
             if (state.reelsRowMatrix.length <= i) {
               _i = state.reelsRowMatrix.length - 1;
             }
+
             try {
               return state.matrix.isEmpty
                   ? NewReelsGridView.showShimmer()
@@ -56,35 +58,10 @@ class ReelsGridViewBody extends StatelessWidget {
           if (state.status.isLoading) {
             return NewReelsGridView.showShimmer();
           }
-
           return GestureControlledGridWidget(
             widgetMatrix: widgetMatrix,
             rowIndex: state.currentRowIndex,
             columnIndex: state.currentColumnIndex,
-            onBottomSwipe: () {
-              cubit.swipeTracking(bottom: true);
-            },
-            onTopSwipe: () {
-              cubit.swipeTracking(top: true);
-            },
-            onLeftSwipe: () {
-              cubit.swipeTracking(left: true);
-            },
-            onRightSwipe: () {
-              cubit.swipeTracking(right: true);
-            },
-            onLeftTopSwipe: () {
-              cubit.swipeTracking(topLeft: true);
-            },
-            onLeftBottomSwipe: () {
-              cubit.swipeTracking(bottomLeft: true);
-            },
-            onRightTopSwipe: () {
-              cubit.swipeTracking(topRight: true);
-            },
-            onRightBottomSwipe: () {
-              cubit.swipeTracking(bottomRight: true);
-            },
             onSwipe: (int row, int column) {
               cubit.swipeTracking(rowIndex: row, columnIndex: column);
             }, vpControllerMatrix: state.vpControllerMatrix,
@@ -105,7 +82,9 @@ class ReelsGridViewBody extends StatelessWidget {
         print('i - $i j - $j');
       }
     }
-
     return widgetMatrix;
   }
+
+
+
 }
