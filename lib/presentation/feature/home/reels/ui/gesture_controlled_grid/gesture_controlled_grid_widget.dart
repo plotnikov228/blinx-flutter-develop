@@ -1,8 +1,17 @@
+import 'package:blinx/presentation/feature/home/reels/ui/gesture_controlled_grid/widgets/infinity_page_view.dart';
 import 'package:blinx/presentation/feature/home/reels/ui/gesture_controlled_grid/widgets/page_view_item.dart';
+import 'package:blinx/presentation/feature/home/reels/ui/new_reels_grid_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'dart:async';
+
+import 'package:video_player/video_player.dart';
+
+import '../../cubit/reels_cubit.dart';
+
 class GestureControlledGridWidget extends StatefulWidget {
   final List<List<Widget>> widgetMatrix;
+  final List<List<VideoPlayerController?>?> vpControllerMatrix;
   final int rowIndex;
   final int columnIndex;
   final Function? onRightSwipe;
@@ -27,7 +36,9 @@ class GestureControlledGridWidget extends StatefulWidget {
       this.onLeftTopSwipe,
       this.onLeftBottomSwipe,
       required this.rowIndex,
-      required this.columnIndex, required this.onSwipe});
+      required this.columnIndex,
+      required this.onSwipe,
+      required this.vpControllerMatrix});
 
   @override
   State<GestureControlledGridWidget> createState() =>
@@ -36,25 +47,30 @@ class GestureControlledGridWidget extends StatefulWidget {
 
 class _GestureControlledGridWidgetState
     extends State<GestureControlledGridWidget> with TickerProviderStateMixin {
-
-
-
-
-  late PageController horizontalController;
-  late PageController verticalController;
+  late InfinityPageController horizontalController;
+  late InfinityPageController verticalController;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    _animationController = AnimationController(vsync: this, duration: const Duration(milliseconds: 200));
-     horizontalController = PageController(initialPage: widget.columnIndex, keepPage: false);
-      verticalController = PageController(initialPage: widget.rowIndex, keepPage: false);
+    widget.vpControllerMatrix[widget.rowIndex]![widget.columnIndex]!.play();
+    _animationController = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 200));
+    horizontalController = InfinityPageController(
+        initialPage: widget.columnIndex,
+        keepPage: false,
+        itemCount: widget.widgetMatrix[0].length);
+    verticalController = InfinityPageController(
+        initialPage: widget.rowIndex,
+        keepPage: false,
+        itemCount: widget.widgetMatrix.length);
     _animation = Tween<double>(
       begin: 1.0,
       end: 1.3,
     ).animate(_animationController);
-
+    row ??= widget.rowIndex;
+    column ??= widget.columnIndex;
   }
 
   int? row;
@@ -63,64 +79,84 @@ class _GestureControlledGridWidgetState
   late AnimationController _animationController;
   late Animation<double> _animation;
   bool canSwipe = true;
+
   @override
   Widget build(BuildContext context) {
+    final cubit = context.read<ReelsCubit>();
     final size = MediaQuery.of(context).size;
-
     final pageViews = List<Widget>.generate(
         widget.widgetMatrix.length,
         (index) => PageViewItem(
-          canSwipe: canSwipe,
-            widgetMatrix: widget.widgetMatrix,
-            currentRow: index,
+            canSwipe: canSwipe,
+            widgetMatrix: widget.widgetMatrix[index],
             controller: horizontalController,
             onPageChanged: (int page) async {
-              await _animationController.forward().then((value) => _animationController.reverse());
-              row ??= widget.rowIndex;
-              column = page;
-              widget.onSwipe(row!, column!);
+              try {
+                await widget.vpControllerMatrix[row!]![column!]!.pause();
+                await widget.vpControllerMatrix[row!]![column!]!.dispose();
+                widget.vpControllerMatrix[row!]![column!] = null;
+              } catch(_ ) {
 
+              }
+              await _animationController
+                  .forward()
+                  .then((value) => _animationController.reverse());
+              row ??= widget.rowIndex;
+              column = page % widget.widgetMatrix[row!].length;
+              widget.onSwipe(row!, column!);
+              try {
+                if (widget.vpControllerMatrix[row!]![column!] == null) {
+                  widget.vpControllerMatrix[row!]![column!] =
+                      cubit.addVP(row!, column!);
+                } else if (widget.vpControllerMatrix[row!]![column!]!.value.isInitialized) {
+                  widget.vpControllerMatrix[row!]![column!] =
+                      cubit.addVP(row!, column!);
+                }
+                await widget.vpControllerMatrix[row!]![column!]!.play();
+              } catch (_) {
+
+              }
+              //_setPreviewVideoInWidget();
+              setState(() {});
               print('page indexes was changed on $row and $column');
             }));
     return AnimatedBuilder(
       animation: _animation,
       builder: (context, _widget) => Transform.scale(
-          scale: _animation.value,
-          child:SizedBox(
-        height: size.height,
-        width: size.width,
-        child:   PageView(
-            physics: canSwipe ? const PageScrollPhysics() : const NeverScrollableScrollPhysics(),
-            controller: verticalController,
-            scrollDirection: Axis.vertical,
-            onPageChanged: (page) async {
+        scale: _animation.value,
+        child: SizedBox(
+            height: size.height,
+            width: size.width,
+            child: PageViewItem(
+              direction: Axis.vertical,
+              widgetMatrix: pageViews,
+              controller: verticalController,
+              onPageChanged: (page) async {
+                try {
+                  await widget.vpControllerMatrix[row!]![column!]!.pause();
+                  await widget.vpControllerMatrix[row!]![column!]!.dispose();
+                  widget.vpControllerMatrix[row!]![column!] = null;
+                } catch (_) {}
+                await _animationController
+                    .forward()
+                    .then((value) => _animationController.reverse());
+                column ??= widget.columnIndex;
 
-              await _animationController.forward().then((value) => _animationController.reverse());
-              column ??= widget.columnIndex;
-              row = page;
-              widget.onSwipe(row!, column!);
-              print('page indexes was changed on $row and $column');
-            },
-            children: pageViews),
-        ),
-        ),
+                row = page % widget.widgetMatrix.length;
+
+                widget.onSwipe(row!, column!);
+                try {
+                  if (widget.vpControllerMatrix[row!]![column!] == null) {
+                    widget.vpControllerMatrix[row!]![column!] =
+                        cubit.addVP(row!, column!);
+                  }
+                  await widget.vpControllerMatrix[row!]![column!]!.play();
+                } catch (_) {}
+                setState(() {});
+                print('page indexes was changed on $row and $column');
+              },
+            )),
+      ),
     );
   }
-
-  List<T> _getListFromMatrix<T>(List<List<T>> matrix) {
-    final list = <T>[];
-    for (final matrixItem in matrix) {
-      for (final itemInMatrixItem in matrixItem) {
-        list.add(itemInMatrixItem);
-      }
-    }
-    return list;
-  }
-}
-
-enum Directions {
-  right,
-  left,
-  top,
-  bottom,
 }

@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:flutter/material.dart';
+import 'package:video_player/video_player.dart';
 import '../../../../../domain/entities/paginated_list/paginated_reels.dart';
 import '../../reels_details/reels_details_screen.dart';
 import '../ui/hero_reels_details_screen.dart';
@@ -24,7 +25,7 @@ class ReelsCubit extends Cubit<ReelsState> {
   ) : super(const ReelsState());
 
   final GetReelsUseCase _getReelsUseCase;
-
+  List<List<VideoPlayerController?>> vpControllerMatrix = [];
    List<List<PaginatedReels?>> gridMatrix = [];
    List<List<List<ReelsRowType>?>> reelsRowMatrix = [];
   int pageCount = 1;
@@ -42,6 +43,7 @@ class ReelsCubit extends Cubit<ReelsState> {
 
     await _loadMatrix().then((value) => emit(state.copyWith(
         status: const BaseStatus.success(),
+        vpControllerMatrix: vpControllerMatrix,
         currentPage:
             gridMatrix[currentRowIndex]![currentColumnIndex]!.currentPage,
         total: gridMatrix[currentRowIndex]![currentColumnIndex]!.total,
@@ -93,10 +95,15 @@ class ReelsCubit extends Cubit<ReelsState> {
     await _addElementsWithMargins<PaginatedReels>(
         row, column, gridMatrix, false);
 
-    await _addElementsWithMargins<List<ReelsRowType>>(
-        row, column, reelsRowMatrix, true, item: () {
-      return _generateReelsRowsTypes();
+    await _addElementsWithMargins<VideoPlayerController>(
+        row, column, vpControllerMatrix, false, item: (r, c) {
+      return addVP(r, c);
     });
+
+    await _addElementsWithMargins<List<ReelsRowType>>(
+        row, column, reelsRowMatrix, true, item: (r, c) {
+      return _generateReelsRowsTypes();
+    }).then((value) =>
     emit(state.copyWith(
         status: const BaseStatus.success(),
         reelsList: gridMatrix[currentRowIndex]![currentColumnIndex]!.reelsList,
@@ -104,13 +111,14 @@ class ReelsCubit extends Cubit<ReelsState> {
             gridMatrix[currentRowIndex]![currentColumnIndex]!.currentPage,
         currentColumnIndex: currentColumnIndex,
         currentRowIndex: currentRowIndex,
+        vpControllerMatrix: vpControllerMatrix,
         matrix: gridMatrix,
-        reelsRowMatrix: reelsRowMatrix));
+        reelsRowMatrix: reelsRowMatrix)));
   }
 
   Future _addElementsWithMargins<T>(
       int row, int column, List<List<T?>> matrix, bool needUpdateIndexes,
-      {T Function()? item}) async {
+      {T Function(int, int)? item}) async {
     // Проверяем, достигли ли мы границы матрицы
 
     if (row == 0 ||
@@ -141,23 +149,23 @@ class ReelsCubit extends Cubit<ReelsState> {
       }
 
       // Обновляем значения текущей строки и текущей колонки
+
+
+      await _replaceSurroundingNulls<T>(row, column, newMatrix, item);
       if (needUpdateIndexes) {
         if (row == 0) currentRowIndex++;
         if (column == 0) currentColumnIndex++;
       }
-
-      await _replaceSurroundingNulls<T>(row, column, newMatrix, item);
-
       // Обновляем матрицу
       matrix = newMatrix;
     } else {
       await _replaceSurroundingNulls<T>(row, column, matrix, item);
     }
-    print(matrix);
+    print('matrix height - ${matrix.length}, matrix width - ${matrix[0].length}');
   }
 
   Future _replaceSurroundingNulls<T>(
-      int row, int column, List<List<T?>?> matrix, T Function()? item) async {
+      int row, int column, List<List<T?>?> matrix, T Function(int, int)? item) async {
     // Замещаем Null элементы вокруг указанных индексов значением 4
 
     // Определяем границы подматрицы 3x3
@@ -177,7 +185,7 @@ class ReelsCubit extends Cubit<ReelsState> {
             _item = (await _getPaginatedReels()) as T?;
           }
           if (item != null) {
-            _item = item!();
+            _item = item!(i, j);
           }
           matrix[i]![j] = _item!;
         }
@@ -195,10 +203,12 @@ class ReelsCubit extends Cubit<ReelsState> {
     for (var i = 0; i < 3; i++) {
       gridMatrix.add([]);
       reelsRowMatrix.add([]);
+      vpControllerMatrix.add([]);
       for (var j = 0; j < 3; j++) {
         try {
-          gridMatrix[i]!.add(await _getPaginatedReels());
-          reelsRowMatrix[i]!.add(_generateReelsRowsTypes());
+          gridMatrix[i].add(await _getPaginatedReels());
+          reelsRowMatrix[i].add(_generateReelsRowsTypes());
+          vpControllerMatrix[i].add(addVP(i, j));
         } catch (_ ){
             emit(
               state.copyWith(
@@ -209,6 +219,17 @@ class ReelsCubit extends Cubit<ReelsState> {
     }
   }
             }
+
+
+  VideoPlayerController addVP(int row, int column) {
+      var vp = VideoPlayerController.network(
+        'https://edge.api.brightcove.com/playback/v1/accounts/6314458267001/videos/${gridMatrix[row][column]!.reelsList[2].videoId}/master.m3u8?bcov_auth=eyJhbGciOiJSUzI1NiJ9.eyJhY2NpZCI6IjYzMTQ0NTgyNjcwMDEiLCJpYXQiOjE2Nzg3ODE5NDYsImV4cCI6NDA3MDg5ODA2MX0.DtQV2jIiQ4ipxTJzBg2w1lBdev6CJGRUBzldtUA7_0Ewl0jcVm_ErsOPAwOHV9r3ddy2lutT15MHMjyoVOG9gvP9919kqv40BAOBZJzcehz3MsYWWh4JDWhKDtBh2atRmeh4daYhNXqgmMeE9cioKycV_WEt7PexTE6ztMumdkh3rYDm4pdvpEvWZc1tN0K4ff91OM2oWZb8SRlVEJnDIU6exDfd6pUNZd80IoSVRKvHexFbX-IOMzK3bAvPf3l9X6c9ns70me08-ng9WyKmcuUXkeyDbS55OrG0b2v2VavryOBbwhU91hVYV0QokowOqO0fv0Au13NWpMrNQnSNuw',
+      );
+      vp.setVolume(0.0);
+      vp.initialize();
+      vp.setLooping(true);
+      return vp;
+  }
 
   List<ReelsRowType> _generateReelsRowsTypes() {
     final list = <ReelsRowType>[

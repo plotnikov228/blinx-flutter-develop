@@ -34,17 +34,24 @@ class ReelsGridViewBody extends StatelessWidget {
         },
         builder: (context, state) {
           final cubit = context.read<ReelsCubit>();
+
           final widgetMatrix =
-              _getWidgetMatrix<PaginatedReels>(state.matrix, (i, j) {
+              _getWidgetMatrix(state.matrix, (i, j) {
             var _i = i;
             if (state.reelsRowMatrix.length <= i) {
               _i = state.reelsRowMatrix.length - 1;
             }
-            return state.matrix.isEmpty
-                ? NewReelsGridView.showShimmer()
-                : NewReelsGridView(
-                    reelsList: state.matrix[_i]![j]?.reelsList,
-                    reelsRowType: (state.reelsRowMatrix[_i]!)[j]);
+            try {
+              return state.matrix.isEmpty
+                  ? NewReelsGridView.showShimmer()
+                  : NewReelsGridView(
+                reelsList: state.matrix[_i]![j]?.reelsList,
+                reelsRowType: (state.reelsRowMatrix[_i]!)[j],
+                previewPlay: false, vpController: state.vpControllerMatrix[_i]![j],
+              );
+            } catch (_) {
+              return NewReelsGridView.showShimmer();
+            }
           });
           if (state.status.isLoading) {
             return NewReelsGridView.showShimmer();
@@ -80,21 +87,22 @@ class ReelsGridViewBody extends StatelessWidget {
             },
             onSwipe: (int row, int column) {
               cubit.swipeTracking(rowIndex: row, columnIndex: column);
-            },
+            }, vpControllerMatrix: state.vpControllerMatrix,
           );
         }
         //},
         );
   }
 
-  List<List<Widget>> _getWidgetMatrix<T>(
-      List<List<T?>?> matrix, Widget Function(int, int) item) {
+  List<List<Widget>> _getWidgetMatrix(
+      List<List<PaginatedReels?>?> matrix, Widget Function(int, int) item) {
     final widgetMatrix = <List<Widget>>[];
 
     for (var i = 0; i < matrix.length; i++) {
       widgetMatrix.add([]);
       for (var j = 0; j < matrix[i]!.length; j++) {
         widgetMatrix[i].add(item(i, j));
+        print('i - $i j - $j');
       }
     }
 

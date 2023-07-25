@@ -10,6 +10,7 @@ class HeroReelsDetailsScreen extends StatefulWidget {
   final List<Article> listReels;
   final Article article;
   final String tag;
+
   const HeroReelsDetailsScreen(this.article,
       {super.key, required this.listReels, required this.tag});
 
@@ -24,12 +25,12 @@ class _HeroReelsDetailsScreenState extends State<HeroReelsDetailsScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    widgetContent =
+    /*widgetContent =
         ReelsCard(imageUrl: widget.article.imageUrl, article: widget.article,
         squared: true,
         );
     Timer(const Duration(seconds: 2), () {
-      setState(() {
+      setState(() {*/
         widgetContent = GestureDetector(
           onHorizontalDragEnd: (DragEndDetails details) {
             if (details.velocity.pixelsPerSecond.dx > 0) {
@@ -45,8 +46,8 @@ class _HeroReelsDetailsScreenState extends State<HeroReelsDetailsScreen> {
             ),
           ),
         );
-      });
-    });
+      /*});
+    });*/
   }
 
   @override

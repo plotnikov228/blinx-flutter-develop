@@ -22,7 +22,7 @@ mixin _$ReelsState {
   int get currentColumnIndex => throw _privateConstructorUsedError;
   List<List<PaginatedReels?>?> get matrix => throw _privateConstructorUsedError;
   List<List<List<ReelsRowType>?>?> get reelsRowMatrix => throw _privateConstructorUsedError;
-
+  List<List<VideoPlayerController?>?> get vpControllerMatrix => throw _privateConstructorUsedError;
   int get currentPage => throw _privateConstructorUsedError;
 
   int get total => throw _privateConstructorUsedError;
@@ -46,7 +46,7 @@ abstract class $ReelsStateCopyWith<$Res> {
         int currentColumnIndex,
         List<List<PaginatedReels?>?> matrix,
         List<List<List<ReelsRowType>?>?> reelsRowMatrix,
-
+        List<List<VideoPlayerController?>?> vpControllerMatrix,
         int currentPage,
       int total,
       Article? selectedArticle});
@@ -72,6 +72,7 @@ class _$ReelsStateCopyWithImpl<$Res, $Val extends ReelsState>
     Object? reelsList = null,
     Object? currentRowIndex,
     Object? currentColumnIndex,
+    Object? vpControllerMatrix = null,
     Object? matrix,
     Object? reelsRowMatrix,
     Object? currentPage = null,
@@ -79,6 +80,7 @@ class _$ReelsStateCopyWithImpl<$Res, $Val extends ReelsState>
     Object? selectedArticle = freezed,
   }) {
     return _then(_value.copyWith(
+
       status: null == status
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
@@ -111,6 +113,10 @@ class _$ReelsStateCopyWithImpl<$Res, $Val extends ReelsState>
           ? _value.total
           : total // ignore: cast_nullable_to_non_nullable
               as int,
+      vpControllerMatrix: null == vpControllerMatrix
+          ? _value.vpControllerMatrix
+          : vpControllerMatrix // ignore: cast_n
+      as List<List<VideoPlayerController?>?>,
       selectedArticle: freezed == selectedArticle
           ? _value.selectedArticle
           : selectedArticle // ignore: cast_nullable_to_non_nullable
@@ -154,7 +160,7 @@ abstract class _$$_ReelsStateCopyWith<$Res>
         int currentColumnIndex,
         List<List<PaginatedReels?>?> matrix,
         List<List<List<ReelsRowType>?>?> reelsRowMatrix,
-
+        List<List<VideoPlayerController?>?> vpControllerMatrix,
         int currentPage,
       int total,
       Article? selectedArticle});
@@ -183,6 +189,7 @@ class __$$_ReelsStateCopyWithImpl<$Res>
     Object? currentColumnIndex,
     Object? matrix,
     Object? reelsRowMatrix,
+    Object? vpControllerMatrix,
     Object? total = null,
     Object? selectedArticle = freezed,
   }) {
@@ -207,6 +214,12 @@ class __$$_ReelsStateCopyWithImpl<$Res>
           ? _value.reelsRowMatrix
           : reelsRowMatrix // ignore: cast_nullable_to_non_nullable
       as List<List<List<ReelsRowType>?>?>,
+
+
+      vpControllerMatrix: null == vpControllerMatrix
+          ? _value.vpControllerMatrix
+          : vpControllerMatrix
+      as List<List<VideoPlayerController?>?>,
       currentPage: null == currentPage
           ? _value.currentPage
           : currentPage // ignore: cast_nullable_to_non_nullable
@@ -232,6 +245,7 @@ class _$_ReelsState extends _ReelsState {
       this.currentPage = 0,
         this.currentRowIndex = 1,
         this.currentColumnIndex = 1,
+        this.vpControllerMatrix = const [],
         this.matrix = const [[]],
         this.reelsRowMatrix = const [[[]]],
       this.total = 0,
@@ -262,6 +276,9 @@ class _$_ReelsState extends _ReelsState {
   @override
   @JsonKey()
   final List<List<List<ReelsRowType>?>?> reelsRowMatrix;
+  @override
+  @JsonKey()
+  final List<List<VideoPlayerController?>?> vpControllerMatrix;
   @override
   @JsonKey()
   final int currentPage;
@@ -315,6 +332,7 @@ abstract class _ReelsState extends ReelsState {
       final int currentPage,
         final int currentRowIndex,
         final int currentColumnIndex,
+        final List<List<VideoPlayerController?>?> vpControllerMatrix,
         final List<List<PaginatedReels?>?> matrix,
         final List<List<List<ReelsRowType>?>?> reelsRowMatrix,
 
@@ -326,6 +344,8 @@ abstract class _ReelsState extends ReelsState {
   BaseStatus<dynamic> get status;
   @override
   List<Article> get reelsList;
+  @override
+  List<List<VideoPlayerController?>?> get vpControllerMatrix;
   @override
   int get currentPage;
   @override
