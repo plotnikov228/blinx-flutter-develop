@@ -30,7 +30,7 @@ dependencies:
   gradient_borders: ^1.0.0
   gradient_ui_widgets:
     path: ./pubs/gradient_ui_widgets-1.0.2-nullsafety_updated/
-  shimmer: ^2.0.0
+  shimmer: ^3.0.0
 
   # Localization
   nstack:
