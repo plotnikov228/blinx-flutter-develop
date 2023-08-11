@@ -49,7 +49,7 @@ class ReelsGridViewBody extends StatelessWidget {
                   : NewReelsGridView(
                 reelsList: state.matrix[_i]![j]?.reelsList,
                 reelsRowType: (state.reelsRowMatrix[_i]!)[j],
-                previewPlay: false, vpController: state.vpControllerMatrix[_i]![j],
+                previewPlay: false, vpController: null,
               );
             } catch (_) {
               return NewReelsGridView.showShimmer();
@@ -64,7 +64,7 @@ class ReelsGridViewBody extends StatelessWidget {
             columnIndex: state.currentColumnIndex,
             onSwipe: (int row, int column) {
               cubit.swipeTracking(rowIndex: row, columnIndex: column);
-            }, vpControllerMatrix: state.vpControllerMatrix,
+            }, // vpControllerMatrix: state.vpControllerMatrix,
           );
         }
         //},
@@ -79,7 +79,6 @@ class ReelsGridViewBody extends StatelessWidget {
       widgetMatrix.add([]);
       for (var j = 0; j < matrix[i]!.length; j++) {
         widgetMatrix[i].add(item(i, j));
-        print('i - $i j - $j');
       }
     }
     return widgetMatrix;

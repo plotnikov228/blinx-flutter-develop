@@ -120,6 +120,7 @@ class _ReelsDetailsScreenState extends State<ReelsDetailsScreen>
   @override
   void dispose() {
     pController.dispose();
+    _animationController.dispose();
     Wakelock.disable();
     for (var element in vpControllers) {
       try {

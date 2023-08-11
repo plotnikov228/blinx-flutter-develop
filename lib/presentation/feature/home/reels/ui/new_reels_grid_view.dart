@@ -60,10 +60,13 @@ class _NewReelsGridViewState extends State<NewReelsGridView>
     return SizedBox(
       height: size.height,
       child: SingleChildScrollView(
-        physics: NeverScrollableScrollPhysics(),
-        child: Column(
-          children:
-              (reelsRowType)!.map((e) => _reelsRowInWidget(e, size)).toList(),
+        physics: const NeverScrollableScrollPhysics(),
+        child: Container(
+          color: Colors.black,
+          child: Column(
+            children:
+                (reelsRowType)!.map((e) => _reelsRowInWidget(e, size)).toList(),
+          ),
         ),
       ),
     );

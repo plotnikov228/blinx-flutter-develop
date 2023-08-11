@@ -43,7 +43,7 @@ class ReelsCard extends StatelessWidget { // карточка видео
                 fit: StackFit.expand,
                 alignment: Alignment.center,
                 children: [
-                  isLoading ? const ShimmerBox() : playingVideo && vpController != null && vpController!.value.isInitialized? ReelsPreviewCard(article: article, canPlay: canPlay, vpController: vpController,) : AppNetworkImage(imageUrl: imageUrl),
+                  isLoading ? const ShimmerBox() /*: playingVideo && vpController != null && vpController!.value.isInitialized? ReelsPreviewCard(article: article, canPlay: canPlay, vpController: vpController,)*/ : AppNetworkImage(imageUrl: imageUrl),
                   /*IconButton(
                     onPressed: onPlayIconTap,
                     icon: Assets.icons.play.svg(color: context.colors.white),

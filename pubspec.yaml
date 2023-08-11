@@ -26,7 +26,7 @@ dependencies:
 
   # UI
   cupertino_icons: ^1.0.4
-  flutter_svg: ^2.0.5
+  flutter_svg: ^1.1.6
   gradient_borders: ^1.0.0
   gradient_ui_widgets:
     path: ./pubs/gradient_ui_widgets-1.0.2-nullsafety_updated/
@@ -99,6 +99,9 @@ dependencies:
   video_player: ^2.1.1
   wakelock: ^0.6.2
   device_info: ^2.0.3
+  graphx: ^1.0.12
+  image: ^4.0.17
+  screenshot: ^2.1.0
 
 dev_dependencies:
   flutter_test:
@@ -112,7 +115,8 @@ dev_dependencies:
   flutter_lints: ^2.0.1
   flutter_gen_runner: ^5.3.0
   cached_video_player: ^2.0.4
-  flutter_widget_from_html: ^0.10.0
+
+  #flutter_widget_from_html: ^0.10.3
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 

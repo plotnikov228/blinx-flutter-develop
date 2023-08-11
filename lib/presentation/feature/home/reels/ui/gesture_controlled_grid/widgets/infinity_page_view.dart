@@ -45,7 +45,7 @@ class InfinityPageController  {
     int initialPage = 0,
     bool keepPage = true,
 
-    double viewportFraction: 1.0,
+    double viewportFraction: 1 / 3,
   })  : realIndex = initialPage + kMiddleValue{
     pageController = PageController(
         initialPage: initialPage + kMiddleValue,
@@ -122,6 +122,7 @@ class _InfinityPageViewState extends State<InfinityPageView> {
   @override
   Widget build(BuildContext context) {
     return PageView.builder(
+      clipBehavior: Clip.none,
       key: widget.key,
       scrollDirection: widget.scrollDirection,
       reverse: widget.reverse,
