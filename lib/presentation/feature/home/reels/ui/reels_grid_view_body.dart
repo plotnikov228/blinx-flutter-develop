@@ -13,8 +13,8 @@ import 'package:video_player/video_player.dart';
 
 import '../../../../../domain/entities/paginated_list/paginated_reels.dart';
 import '../../../../../injection/injector.dart';
-import 'gesture_controlled_grid/gesture_controlled_grid_widget.dart';
 import 'new_reels_grid_view.dart';
+import 'omnidirectional_page_view/omnidirectional_page_view.dart';
 
 class ReelsGridViewBody extends StatelessWidget {
   const ReelsGridViewBody({
@@ -49,7 +49,7 @@ class ReelsGridViewBody extends StatelessWidget {
                   : NewReelsGridView(
                 reelsList: state.matrix[_i]![j]?.reelsList,
                 reelsRowType: (state.reelsRowMatrix[_i]!)[j],
-                previewPlay: false, vpController: null,
+                previewPlay: i == state.currentRowIndex && j == state.currentColumnIndex, vpController: state.vpControllerMatrix[i]![j],
               );
             } catch (_) {
               return NewReelsGridView.showShimmer();
@@ -58,13 +58,14 @@ class ReelsGridViewBody extends StatelessWidget {
           if (state.status.isLoading) {
             return NewReelsGridView.showShimmer();
           }
-          return GestureControlledGridWidget(
+          final size = MediaQuery.of(context).size;
+          return OmnidirectionalPageView(
             widgetMatrix: widgetMatrix,
             rowIndex: state.currentRowIndex,
             columnIndex: state.currentColumnIndex,
             onSwipe: (int row, int column) {
               cubit.swipeTracking(rowIndex: row, columnIndex: column);
-            }, // vpControllerMatrix: state.vpControllerMatrix,
+            }, size: size, vpControllerMatrix: state.vpControllerMatrix,
           );
         }
         //},
@@ -72,7 +73,7 @@ class ReelsGridViewBody extends StatelessWidget {
   }
 
   List<List<Widget>> _getWidgetMatrix(
-      List<List<PaginatedReels?>?> matrix, Widget Function(int, int) item) {
+      List<List<dynamic>?> matrix, Widget Function(int, int) item) {
     final widgetMatrix = <List<Widget>>[];
 
     for (var i = 0; i < matrix.length; i++) {

@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
-import 'gesture_controlled_grid_widget.dart';
+import 'omnidirectional_page_view.dart';
 
 class ScrollableGridAnimation {
   List<List<Offset>> startOffsets = [];
@@ -59,6 +59,8 @@ class ScrollableGridAnimation {
       }
     }
 
+    print('animations - ${_animations.map((e) => 'a').toList()}');
+
     return _offsets;
   }
 
@@ -80,7 +82,7 @@ class ScrollableGridAnimation {
             ),
           );
         } catch (_) {
-          rethrow;
+          print('animation error - $_');
         }
 
       }

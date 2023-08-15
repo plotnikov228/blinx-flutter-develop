@@ -1,10 +1,7 @@
-import 'dart:math';
-
-import 'package:blinx/presentation/feature/home/reels/ui/gesture_controlled_grid/widgets/infinity_page_view.dart';
-import 'package:blinx/presentation/feature/home/reels/ui/new_reels_grid_view.dart';
 import 'package:flutter/material.dart';
 
-import '../gesture_controlled_grid_widget.dart';
+import '../omnidirectional_page_view.dart';
+import 'infinity_page_view.dart';
 Widget PageViewItem(
     {required final List<Widget> widgetMatrix,
     required InfinityPageController controller,

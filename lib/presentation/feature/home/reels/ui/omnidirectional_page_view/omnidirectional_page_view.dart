@@ -1,4 +1,4 @@
-import 'package:blinx/presentation/feature/home/reels/ui/gesture_controlled_grid/widgets/fisheye.dart';
+import 'package:better_video_player/better_video_player.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:screenshot/screenshot.dart';
@@ -6,45 +6,54 @@ import 'animations.dart';
 import 'dart:ui' as ui;
 import 'package:graphx/graphx.dart' as graphx;
 
+import 'fisheye.dart';
+
 const _upperLimitScroll = 60;
 const _lowerLimitScroll = -60;
 const _swipeDuration = Duration(milliseconds: 500);
 const _fisheyeDuration = Duration(milliseconds: 900);
 
 // ignore: must_be_immutable
-class GestureControlledGridWidget extends StatefulWidget {
+class OmnidirectionalPageView extends StatefulWidget {
+  final List<AxisDirection> fisheyeDirection;
   final List<List<Widget>> widgetMatrix;
-
-  //final List<List<VideoPlayerController?>?> vpControllerMatrix;
+  final List<List<BetterVideoPlayerController?>?>? vpControllerMatrix;
+  final Size size;
   final int rowIndex;
   final int columnIndex;
+  final bool widgetMatrixCanUpdate;
   final Function(int row, int column) onSwipe;
 
-  const GestureControlledGridWidget(
+  const OmnidirectionalPageView(
       {super.key,
       required this.widgetMatrix,
       required this.rowIndex,
       required this.columnIndex,
       required this.onSwipe,
-      //  required this.vpControllerMatrix
-  });
+      required this.size,
+      this.fisheyeDirection = const [
+        AxisDirection.up,
+        AxisDirection.left,
+        AxisDirection.down,
+        AxisDirection.right
+      ],
+      this.widgetMatrixCanUpdate = true,
+      this.vpControllerMatrix});
 
   @override
-  State<GestureControlledGridWidget> createState() =>
-      _GestureControlledGridWidgetState();
+  State<OmnidirectionalPageView> createState() =>
+      _OmnidirectionalPageViewState();
 }
 
-class _GestureControlledGridWidgetState
-    extends State<GestureControlledGridWidget> with TickerProviderStateMixin {
+class _OmnidirectionalPageViewState extends State<OmnidirectionalPageView>
+    with TickerProviderStateMixin {
   final animation = ScrollableGridAnimation();
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    try {
-      //widget.vpControllerMatrix[widget.rowIndex]![widget.columnIndex]!.play();
-    } catch (_) {}
+
     _animationController =
         AnimationController(vsync: this, duration: _swipeDuration);
     _fisheyeController = AnimationController(
@@ -61,16 +70,18 @@ class _GestureControlledGridWidgetState
     row = widget.rowIndex;
     column = widget.columnIndex;
   }
-  _fisheyeFirst ()async  {
+
+  _fisheyeFirst() async {
     if (_showFisheye && canSwipe) {
-          await screenshotController.captureAsUiImage().then((value) {
-            _fisheyeImage = value;
-          });
-          _fisheyeAngle = _fisheyeController.value;
-          setState(() {});
-        }
+      await screenshotController.captureAsUiImage().then((value) {
+        _fisheyeImage = value;
+      });
+      _fisheyeAngle = _fisheyeController.value;
+      setState(() {});
+    }
   }
-  _fisheyeSecond () {
+
+  _fisheyeSecond() {
     _showFisheye = false;
     Timer(const Duration(milliseconds: 400), () async {
       if (canShowFisheye) {
@@ -90,43 +101,47 @@ class _GestureControlledGridWidgetState
     });
   }
 
-  _fisheyeThird (VoidCallback then) async {
-
+  _fisheyeThird(VoidCallback then) async {
     AxisDirection? horizontalDir;
     AxisDirection? verticalDir;
 
     if (canSwipe) {
       if (changedDetails!.dy > _upperLimitScroll) {
         verticalDir = AxisDirection.up;
-
       }
       if (changedDetails!.dy < _lowerLimitScroll) {
         verticalDir = AxisDirection.down;
-
       }
       if (changedDetails!.dx > _upperLimitScroll) {
         horizontalDir = AxisDirection.left;
-
       }
       if (changedDetails!.dx < _lowerLimitScroll) {
         horizontalDir = AxisDirection.right;
-
       }
-
     }
-    if( (verticalDir != null && horizontalDir == null) || (verticalDir == null && horizontalDir != null)) {
-      await screenshotController.captureAsUiImage().then((value) {
-      _fisheyeImage = value;
-      _showFisheye = true;
-      setState(() {});
-      Timer(_fisheyeDuration, () {
-        _showFisheye = false;
-        setState(() {});
+    if ((verticalDir != null && horizontalDir == null) ||
+        (verticalDir == null && horizontalDir != null)) {
+      bool thenWasDone = false;
+      for (final item in widget.fisheyeDirection) {
+        if (verticalDir == item || horizontalDir == item) {
+          await screenshotController.captureAsUiImage().then((value) {
+            _fisheyeImage = value;
+            _showFisheye = true;
+            setState(() {});
+            thenWasDone = true;
+            Timer(_fisheyeDuration, () {
+              _showFisheye = false;
+              setState(() {});
+              then();
+            });
+          });
+          break;
+        }
+      }
+      if (!thenWasDone) {
         then();
-      });
-    });
-    }
-    else {
+      }
+    } else {
       then();
     }
   }
@@ -195,24 +210,51 @@ class _GestureControlledGridWidgetState
         canSwipe: canSwipe);
   }
 
+  bool _userPositionOnOtherSide = false;
+  bool _needUpdate = false;
+
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    if (!matrixSizeCompare(widgetMatrix, widget.widgetMatrix)) {
-      realColumn = column;
-      realRow = row;
-      widgetMatrix =
-          widget.widgetMatrix.getRange(0, widget.widgetMatrix.length).toList();
+    final size = widget.size;
+    if (widget.widgetMatrixCanUpdate) {
+      if (!matrixSizeCompare(widgetMatrix, widget.widgetMatrix)) {
+        try {
+          if(realRow != row || realColumn != column) {
+            if (_needUpdate) {
+              realRow = row;
+              realColumn = column;
+              var dir = _getDirection(changedDetails);
+              if ((dir ==
+                  OmnidirectionalDirection.rightTop || dir ==
+                  OmnidirectionalDirection.right || dir ==
+                  OmnidirectionalDirection.rightBottom)) {
+                realColumn = realColumn! + 1;
+              }
+              if ((dir ==
+                  OmnidirectionalDirection.leftBottom || dir ==
+                  OmnidirectionalDirection.bottom || dir ==
+                  OmnidirectionalDirection.rightBottom)) {
+                realRow = realRow! + 1;
+              }
+            }
+            row = realRow!;
+            column = realColumn!;
+          }
+          widgetMatrix = widget.widgetMatrix
+              .getRange(0, widget.widgetMatrix.length)
+              .toList();
+        } catch (_) {}
+      }
     }
-    if (!matrixSizeCompare(animation.startOffsets, widgetMatrix) ||
-        animation.startOffsets.isEmpty) {
-      animation.startOffsets = _setOffsets(
+      if (!matrixSizeCompare(animation.startOffsets, widgetMatrix) ||
+          animation.startOffsets.isEmpty) {
+        animation.startOffsets = _setOffsets(
           size: size,
           matrix: widgetMatrix,
-          newRow: row,
-          newColumn: column);
-      setState(() {});
-    }
+        );
+        setState(() {});
+      }
+
 
     return Stack(
       children: [
@@ -266,11 +308,13 @@ class _GestureControlledGridWidgetState
                         widgetMatrix.insert(
                             0, widgetMatrix[widgetMatrix.length - 1]);
                         widgetMatrix.removeLast();
-
+                        _needUpdate = true;
                         row = 1;
                       }
                       if (realRow! < 0) {
-                        realRow = (widgetMatrix.length + realRow!).abs();
+                        _userPositionOnOtherSide = true;
+
+                        realRow = (realRow! % widgetMatrix.length).abs();
                       }
                     }
                     if (changedDetails!.dy < _lowerLimitScroll) {
@@ -280,13 +324,17 @@ class _GestureControlledGridWidgetState
 
                       if (row > widgetMatrix.length - 1) row = 0;
                       if (row == widgetMatrix.length - 1) {
+                        _needUpdate = true;
+
                         widgetMatrix.add(widgetMatrix[0]);
                         widgetMatrix.removeAt(0);
 
                         row = widgetMatrix.length - 2;
                       }
                       if (realRow! >= widgetMatrix.length) {
-                        realRow = (widgetMatrix.length - realRow!).abs();
+                        _userPositionOnOtherSide = true;
+
+                        realRow = (widgetMatrix.length % realRow!).abs();
                       }
                     }
                     if (changedDetails!.dx > _upperLimitScroll) {
@@ -295,11 +343,14 @@ class _GestureControlledGridWidgetState
                       realColumn = realColumn! - 1;
                       if (column < 0) column = widgetMatrix[row].length - 1;
                       if (realColumn! < 0) {
+                        _userPositionOnOtherSide = true;
                         realColumn =
-                            (widgetMatrix[row].length + realColumn!).abs();
+                            (realColumn! % widgetMatrix[row].length).abs();
                       }
 
                       if (column == 0) {
+                        _needUpdate = true;
+
                         for (var i = 0; i < widgetMatrix.length; i++) {
                           widgetMatrix[i].insert(0, widgetMatrix[i].last);
                           widgetMatrix[i].removeLast();
@@ -313,11 +364,14 @@ class _GestureControlledGridWidgetState
                       realColumn = realColumn! + 1;
                       if (column > widgetMatrix[row].length - 1) column = 0;
                       if (realColumn! >= widgetMatrix.length) {
+                        _userPositionOnOtherSide = true;
                         realColumn =
-                            (widgetMatrix[row].length - realColumn!).abs();
+                            (widgetMatrix[row].length % realColumn!).abs();
                       }
 
                       if (column == widgetMatrix[row].length - 1) {
+                        _needUpdate = true;
+
                         for (var i = 0; i < widgetMatrix.length; i++) {
                           widgetMatrix[i].add(widgetMatrix[i][0]);
                           widgetMatrix[i].removeAt(0);
@@ -335,13 +389,15 @@ class _GestureControlledGridWidgetState
                   }
                 });
               });
-
-
             },
-            child: Stack(
-              clipBehavior: Clip.none,
-              children: animation.getWidgetsWithChangedOffsets(
-                  widgetMatrix, _animationController),
+            child: SizedBox(
+              height: size.height,
+              width: size.width,
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: animation.getWidgetsWithChangedOffsets(
+                    widgetMatrix, _animationController),
+              ),
             ),
           ),
         ),
@@ -356,11 +412,14 @@ class _GestureControlledGridWidgetState
                     ignoring: true,
                     child: graphx.SceneBuilderWidget(
                       builder: () => graphx.SceneController(
-                          front: DrawTriangleGridScene(_fisheyeImage!,
-                              damp: 0.98,
-                              spring: 0.0012,
-                              stiff: 0.03,
-                              angle: _fisheyeAngle)),
+                          front: DrawTriangleGridScene(
+                        _fisheyeImage!,
+                        size.width / 2,
+                        size.height / 2,
+                        damp: 0.98,
+                        spring: 0.0025,
+                        stiff: 0.02,
+                      )),
                       autoSize: true,
                     ),
                   ))
@@ -382,4 +441,60 @@ bool matrixSizeCompare(
   }
 
   return true;
+}
+
+OmnidirectionalDirection _getDirection(Offset? changedDetails) {
+  OmnidirectionalDirection? horizontalDir;
+  OmnidirectionalDirection? verticalDir;
+
+  if (changedDetails!.dy > _upperLimitScroll) {
+    verticalDir = OmnidirectionalDirection.top;
+  }
+  if (changedDetails.dy < _lowerLimitScroll) {
+    verticalDir = OmnidirectionalDirection.bottom;
+  }
+  if (changedDetails.dx > _upperLimitScroll) {
+    horizontalDir = OmnidirectionalDirection.left;
+  }
+  if (changedDetails.dx < _lowerLimitScroll) {
+    horizontalDir = OmnidirectionalDirection.right;
+  }
+  if ((verticalDir != null && horizontalDir == null) ||
+      (verticalDir == null && horizontalDir != null)) {
+    if (verticalDir != null) {
+      return verticalDir;
+    } else {
+      return horizontalDir!;
+    }
+  } else {
+    return _uniteOmnidirectionalDirections(horizontalDir!, verticalDir!);
+  }
+}
+
+OmnidirectionalDirection _uniteOmnidirectionalDirections(
+    OmnidirectionalDirection horizontal, OmnidirectionalDirection vertical) {
+  if (horizontal == OmnidirectionalDirection.left) {
+    if (vertical == OmnidirectionalDirection.bottom) {
+      return OmnidirectionalDirection.leftBottom;
+    } else {
+      return OmnidirectionalDirection.leftTop;
+    }
+  } else {
+    if (vertical == OmnidirectionalDirection.bottom) {
+      return OmnidirectionalDirection.rightBottom;
+    } else {
+      return OmnidirectionalDirection.rightTop;
+    }
+  }
+}
+
+enum OmnidirectionalDirection {
+  left,
+  leftTop,
+  top,
+  rightTop,
+  right,
+  rightBottom,
+  bottom,
+  leftBottom
 }

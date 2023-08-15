@@ -52,7 +52,7 @@ class _ReelsGridViewState extends State<ReelsGridView> with AutomaticKeepAliveCl
           imageUrl: article.mobileBlinx,
           squared: widget.isStoryTellerProfile,
           onPlayIconTap: () {
-            context.read<ReelsCubit>().update(article, context);
+            context.read<ReelsCubit>().update(article, context, index: index);
           }, article: article,
         ); // видео карточка
       },

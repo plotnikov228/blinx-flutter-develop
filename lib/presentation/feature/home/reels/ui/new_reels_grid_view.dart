@@ -1,3 +1,4 @@
+import 'package:better_video_player/better_video_player.dart';
 import 'package:blinx/domain/entities/article.dart';
 import 'package:blinx/presentation/feature/home/reels/ui/reels_card.dart';
 import 'package:blinx/presentation/feature/home/reels/ui/reels_row.dart';
@@ -18,7 +19,7 @@ class NewReelsGridView extends StatefulWidget {
       : super(key: key);
 
   bool previewPlay;
-  final VideoPlayerController? vpController;
+  final BetterVideoPlayerController? vpController;
   final List<Article>? reelsList;
   final bool isInLoadingState;
   final bool isStoryTellerProfile;
@@ -99,7 +100,7 @@ class _NewReelsGridViewState extends State<NewReelsGridView>
                           onPlayIconTap: () {
                             context.read<ReelsCubit>().update(
                                 reelsList[0], context,
-                                heroTag: reelsList[0].path);
+                                heroTag: reelsList[0].path, index: 0);
                           },
                           article: reelsList[0]),
                     ),
@@ -112,7 +113,7 @@ class _NewReelsGridViewState extends State<NewReelsGridView>
                         onPlayIconTap: () {
                           context.read<ReelsCubit>().update(
                               reelsList[1], context,
-                              heroTag: reelsList[1].path);
+                              heroTag: reelsList[1].path, index:1);
                         },
                         article: reelsList[1],
                       ),
@@ -128,7 +129,7 @@ class _NewReelsGridViewState extends State<NewReelsGridView>
                   squared: widget.isStoryTellerProfile,
                   onPlayIconTap: () {
                     context.read<ReelsCubit>().update(reelsList[2], context,
-                        heroTag: reelsList[2].path);
+                        heroTag: reelsList[2].path, index:2);
                   },
                   article: reelsList[2],
                   playingVideo: true,
@@ -162,7 +163,7 @@ class _NewReelsGridViewState extends State<NewReelsGridView>
                             onPlayIconTap: () {
                               context.read<ReelsCubit>().update(
                                   reelsList[0], context,
-                                  heroTag: reelsList[0].path);
+                                  heroTag: reelsList[0].path, index:3);
                             },
                             article: reelsList[0])),
                     SizedBox(
@@ -179,7 +180,7 @@ class _NewReelsGridViewState extends State<NewReelsGridView>
                                   onPlayIconTap: () {
                                     context.read<ReelsCubit>().update(
                                         reelsList[1], context,
-                                        heroTag: reelsList[1].path);
+                                        heroTag: reelsList[1].path, index:4);
                                   },
                                   article: reelsList[1]),
                             ),
@@ -192,7 +193,7 @@ class _NewReelsGridViewState extends State<NewReelsGridView>
                                   onPlayIconTap: () {
                                     context.read<ReelsCubit>().update(
                                         reelsList[2], context,
-                                        heroTag: reelsList[2].path);
+                                        heroTag: reelsList[2].path, index:5);
                                   },
                                   article: reelsList[2]),
                             ),
@@ -209,7 +210,7 @@ class _NewReelsGridViewState extends State<NewReelsGridView>
                     squared: widget.isStoryTellerProfile,
                     onPlayIconTap: () {
                       context.read<ReelsCubit>().update(reelsList[3], context,
-                          heroTag: reelsList[3].path);
+                          heroTag: reelsList[3].path, index:6);
                     },
                     article: reelsList[3],
                     playingVideo: false,
@@ -232,7 +233,7 @@ class _NewReelsGridViewState extends State<NewReelsGridView>
                       squared: widget.isStoryTellerProfile,
                       onPlayIconTap: () {
                         context.read<ReelsCubit>().update(reelsList[0], context,
-                            heroTag: reelsList[0].path);
+                            heroTag: reelsList[0].path, index: 7);
                       },
                       article: reelsList[0])),
               SizedBox(
@@ -243,7 +244,7 @@ class _NewReelsGridViewState extends State<NewReelsGridView>
                       squared: widget.isStoryTellerProfile,
                       onPlayIconTap: () {
                         context.read<ReelsCubit>().update(reelsList[1], context,
-                            heroTag: reelsList[1].path);
+                            heroTag: reelsList[1].path, index: 8);
                       },
                       article: reelsList[1])),
               SizedBox(
@@ -254,7 +255,7 @@ class _NewReelsGridViewState extends State<NewReelsGridView>
                       squared: widget.isStoryTellerProfile,
                       onPlayIconTap: () {
                         context.read<ReelsCubit>().update(reelsList[2], context,
-                            heroTag: reelsList[2].path);
+                            heroTag: reelsList[2].path , index: 9);
                       },
                       playingVideo: false,
                       article: reelsList[2]))

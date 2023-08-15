@@ -9,7 +9,7 @@ class ReelsState with _$ReelsState {
     @Default(1) int currentRowIndex,
     @Default(1) int currentColumnIndex,
     @Default([[],[],[]]) List<List<PaginatedReels?>?> matrix,
-    @Default([[],[],[]]) List<List<VideoPlayerController?>?> vpControllerMatrix,
+    @Default([[],[],[]]) List<List<BetterVideoPlayerController?>?> vpControllerMatrix,
     @Default([[[]],[[]],[[]],]) List<List<List<ReelsRowType>?>?> reelsRowMatrix,
     @Default(0) int currentPage,
     @Default(0) int total,

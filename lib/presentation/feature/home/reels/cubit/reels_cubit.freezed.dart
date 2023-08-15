@@ -22,7 +22,7 @@ mixin _$ReelsState {
   int get currentColumnIndex => throw _privateConstructorUsedError;
   List<List<PaginatedReels?>?> get matrix => throw _privateConstructorUsedError;
   List<List<List<ReelsRowType>?>?> get reelsRowMatrix => throw _privateConstructorUsedError;
-  List<List<VideoPlayerController?>?> get vpControllerMatrix => throw _privateConstructorUsedError;
+  List<List<BetterVideoPlayerController?>?> get vpControllerMatrix => throw _privateConstructorUsedError;
   int get currentPage => throw _privateConstructorUsedError;
 
   int get total => throw _privateConstructorUsedError;
@@ -46,7 +46,7 @@ abstract class $ReelsStateCopyWith<$Res> {
         int currentColumnIndex,
         List<List<PaginatedReels?>?> matrix,
         List<List<List<ReelsRowType>?>?> reelsRowMatrix,
-        List<List<VideoPlayerController?>?> vpControllerMatrix,
+        List<List<BetterVideoPlayerController?>?> vpControllerMatrix,
         int currentPage,
       int total,
       Article? selectedArticle});
@@ -116,7 +116,7 @@ class _$ReelsStateCopyWithImpl<$Res, $Val extends ReelsState>
       vpControllerMatrix: null == vpControllerMatrix
           ? _value.vpControllerMatrix
           : vpControllerMatrix // ignore: cast_n
-      as List<List<VideoPlayerController?>?>,
+      as List<List<BetterVideoPlayerController?>?>,
       selectedArticle: freezed == selectedArticle
           ? _value.selectedArticle
           : selectedArticle // ignore: cast_nullable_to_non_nullable
@@ -160,7 +160,7 @@ abstract class _$$_ReelsStateCopyWith<$Res>
         int currentColumnIndex,
         List<List<PaginatedReels?>?> matrix,
         List<List<List<ReelsRowType>?>?> reelsRowMatrix,
-        List<List<VideoPlayerController?>?> vpControllerMatrix,
+        List<List<BetterVideoPlayerController?>?> vpControllerMatrix,
         int currentPage,
       int total,
       Article? selectedArticle});
@@ -219,7 +219,7 @@ class __$$_ReelsStateCopyWithImpl<$Res>
       vpControllerMatrix: null == vpControllerMatrix
           ? _value.vpControllerMatrix
           : vpControllerMatrix
-      as List<List<VideoPlayerController?>?>,
+      as List<List<BetterVideoPlayerController?>?>,
       currentPage: null == currentPage
           ? _value.currentPage
           : currentPage // ignore: cast_nullable_to_non_nullable
@@ -278,7 +278,7 @@ class _$_ReelsState extends _ReelsState {
   final List<List<List<ReelsRowType>?>?> reelsRowMatrix;
   @override
   @JsonKey()
-  final List<List<VideoPlayerController?>?> vpControllerMatrix;
+  final List<List<BetterVideoPlayerController?>?> vpControllerMatrix;
   @override
   @JsonKey()
   final int currentPage;
@@ -332,7 +332,7 @@ abstract class _ReelsState extends ReelsState {
       final int currentPage,
         final int currentRowIndex,
         final int currentColumnIndex,
-        final List<List<VideoPlayerController?>?> vpControllerMatrix,
+        final List<List<BetterVideoPlayerController?>?> vpControllerMatrix,
         final List<List<PaginatedReels?>?> matrix,
         final List<List<List<ReelsRowType>?>?> reelsRowMatrix,
 
@@ -345,7 +345,7 @@ abstract class _ReelsState extends ReelsState {
   @override
   List<Article> get reelsList;
   @override
-  List<List<VideoPlayerController?>?> get vpControllerMatrix;
+  List<List<BetterVideoPlayerController?>?> get vpControllerMatrix;
   @override
   int get currentPage;
   @override

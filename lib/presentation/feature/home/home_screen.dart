@@ -102,7 +102,7 @@ class _HomeScreenState extends State<HomeScreen> {
             selectedLabelStyle: AppTextStyles.bodySmall,
             unselectedLabelStyle: AppTextStyles.bodySmall,
             onTap: (index) {
-              context.read<ReelsCubit>().update(null, context);
+              context.read<ReelsCubit>().update(null, context, index: index);
               context.read<HomeAbCubit>().update(true);
               _onItemTap(index, tabsRouter);
             },

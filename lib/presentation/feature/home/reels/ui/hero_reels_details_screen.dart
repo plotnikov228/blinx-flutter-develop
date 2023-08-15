@@ -10,8 +10,9 @@ class HeroReelsDetailsScreen extends StatefulWidget {
   final List<Article> listReels;
   final Article article;
   final String tag;
+  final int index;
 
-  const HeroReelsDetailsScreen(this.article,
+  const HeroReelsDetailsScreen(this.article, this.index,
       {super.key, required this.listReels, required this.tag});
 
   @override
@@ -31,23 +32,35 @@ class _HeroReelsDetailsScreenState extends State<HeroReelsDetailsScreen> {
         );
     Timer(const Duration(seconds: 2), () {
       setState(() {*/
-        widgetContent = GestureDetector(
-          onHorizontalDragEnd: (DragEndDetails details) {
+        widgetContent = //GestureDetector(
+         /* onHorizontalDragEnd: (DragEndDetails details) {
             if (details.velocity.pixelsPerSecond.dx > 0) {
               Navigator.pop(context);
             }
-          },
-          child: Hero(
-            tag: widget.article.path,
+          }*/
+          //child:
+          _heroOrContainer(
+            tag: widget.tag,
             child: ReelsDetailsScreen(
               widget.listReels,
+              currentIndex: widget.index,
               selectedArticle: widget.article,
               doPop: true,
             ),
-          ),
+          //),
         );
       /*});
     });*/
+  }
+
+  Widget _heroOrContainer ({String? tag, required Widget child}) {
+    if(tag != null) {
+      return Hero(tag: tag
+          , child: child);
+    }
+    return Container(
+      child: child,
+    );
   }
 
   @override

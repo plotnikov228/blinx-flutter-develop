@@ -1,3 +1,4 @@
+import 'package:better_video_player/better_video_player.dart';
 import 'package:blinx/data/services/response_error.dart';
 import 'package:blinx/domain/entities/article.dart';
 import 'package:blinx/domain/usecases/reels/get_reels_usecase.dart';
@@ -25,7 +26,7 @@ class ReelsCubit extends Cubit<ReelsState> {
   ) : super(const ReelsState());
 
   final GetReelsUseCase _getReelsUseCase;
-  List<List<VideoPlayerController?>> vpControllerMatrix = [];
+  List<List<BetterVideoPlayerController?>> vpControllerMatrix = [];
    List<List<PaginatedReels?>> gridMatrix = [];
    List<List<List<ReelsRowType>?>> reelsRowMatrix = [];
   int pageCount = 1;
@@ -64,12 +65,13 @@ class ReelsCubit extends Cubit<ReelsState> {
       bool? bottomLeft,
       int? rowIndex,
       int? columnIndex}) async {
-    //await vpControllerMatrix[currentRowIndex][currentColumnIndex]!.pause();
+    await vpControllerMatrix[currentRowIndex][currentColumnIndex]!.pause();
     if (rowIndex != null && columnIndex != null) {
       currentRowIndex = rowIndex;
       currentColumnIndex = columnIndex;
     }
-    //await vpControllerMatrix[currentRowIndex][currentColumnIndex]!.play();
+    await vpControllerMatrix[currentRowIndex][currentColumnIndex]!.setVolume(0);
+    await vpControllerMatrix[currentRowIndex][currentColumnIndex]!.play();
 
 
     final row = currentRowIndex;
@@ -78,10 +80,10 @@ class ReelsCubit extends Cubit<ReelsState> {
     await _addElementsWithMargins<PaginatedReels>(
         row, column, gridMatrix, false);
 
-    /*await _addElementsWithMargins<VideoPlayerController>(
+    await _addElementsWithMargins<BetterVideoPlayerController>(
         row, column, vpControllerMatrix, false, item: (r, c) {
-      return addVP(r, c)!;
-    });*/
+      return addVP()!;
+    });
 
     await _addElementsWithMargins<List<ReelsRowType>>(
         row, column, reelsRowMatrix, true, item: (r, c) {
@@ -186,14 +188,13 @@ class ReelsCubit extends Cubit<ReelsState> {
     for (var i = 0; i < 3; i++) {
       gridMatrix.add([]);
       reelsRowMatrix.add([]);
-      //vpControllerMatrix.add([]);
+      vpControllerMatrix.add([]);
       for (var j = 0; j < 3; j++) {
-        try {
+
           gridMatrix[i].add(await _getPaginatedReels());
           reelsRowMatrix[i].add(_generateReelsRowsTypes());
-          //vpControllerMatrix[i].add(addVP(i, j));
-          } catch (_ ){
-         print('exc - $_');
+          vpControllerMatrix[i].add(addVP());
+          try {} catch (_ ){
             emit(
               state.copyWith(
                 status: BaseStatus.failure(ResponseError.from(_)),
@@ -205,28 +206,9 @@ class ReelsCubit extends Cubit<ReelsState> {
             }
 
 
-  VideoPlayerController addVP(int row, int column) {
-    late final String videoId;
-    try {
-    videoId = gridMatrix[row][column]!
-        .reelsList[2]
-        .videoId!;
-    } catch (_) {
-      videoId = '';
-    }
-      var vp = VideoPlayerController.contentUri(
-          Uri.parse(
-            'https://edge.api.brightcove.com/playback/v1/accounts/6314458267001/videos/${videoId}/master.m3u8?bcov_auth=eyJhbGciOiJSUzI1NiJ9.eyJhY2NpZCI6IjYzMTQ0NTgyNjcwMDEiLCJpYXQiOjE2Nzg3ODE5NDYsImV4cCI6NDA3MDg5ODA2MX0.DtQV2jIiQ4ipxTJzBg2w1lBdev6CJGRUBzldtUA7_0Ewl0jcVm_ErsOPAwOHV9r3ddy2lutT15MHMjyoVOG9gvP9919kqv40BAOBZJzcehz3MsYWWh4JDWhKDtBh2atRmeh4daYhNXqgmMeE9cioKycV_WEt7PexTE6ztMumdkh3rYDm4pdvpEvWZc1tN0K4ff91OM2oWZb8SRlVEJnDIU6exDfd6pUNZd80IoSVRKvHexFbX-IOMzK3bAvPf3l9X6c9ns70me08-ng9WyKmcuUXkeyDbS55OrG0b2v2VavryOBbwhU91hVYV0QokowOqO0fv0Au13NWpMrNQnSNuw',
-          )
-      );
-      try {
-      vp.setVolume(0.0);
-      vp.initialize();
-      vp.setLooping(true);
-
-    } catch(_){
-
-    }
+  BetterVideoPlayerController addVP() {
+    final vp = BetterVideoPlayerController()
+      ..setLooping(true);
     return vp;
   }
 
@@ -252,8 +234,6 @@ class ReelsCubit extends Cubit<ReelsState> {
 
       _getReelsUseCase(input: nextPage).then(
         (paginatedReels) {
-          final previousReels = state.reelsList;
-          final newReels = paginatedReels.reelsList;
           emit(
             state.copyWith(
               status: const BaseStatus.success(),
@@ -275,14 +255,15 @@ class ReelsCubit extends Cubit<ReelsState> {
     }
   }
 
-  void update(Article? art, BuildContext context, {String? heroTag}) {
-    if (art != null) {
+  void update(Article? art, BuildContext context, {String? heroTag, required int index}) {
+    if (art != null && gridMatrix[currentRowIndex][currentColumnIndex] != null) {
       Navigator.push(
           context,
           MaterialPageRoute(
               builder: (context) => HeroReelsDetailsScreen(
                     art,
-                    listReels: gridMatrix[currentRowIndex]![currentColumnIndex]!
+                    index,
+                    listReels: gridMatrix[currentRowIndex][currentColumnIndex]!
                         .reelsList,
                     tag: heroTag ?? '',
                   )));

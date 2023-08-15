@@ -15,9 +15,9 @@ class TriangleGrid extends GShape {
 
   TriangleGrid({
     GSprite? doc,
-    this.res = 10,
-    this.cols = 5,
-    this.rows = 5,
+    this.res = 20,
+    this.cols = 10,
+    this.rows = 10,
   }) {
     doc?.addChild(this);
     makeTriangles();
@@ -67,6 +67,9 @@ class TriangleGrid extends GShape {
 }
 
 class DrawTriangleGridScene extends GSprite {
+  final double mx;
+  final double my;
+
   final ui.Image image;
   final double spring;
   final double stiff;
@@ -74,7 +77,7 @@ class DrawTriangleGridScene extends GSprite {
   final double angle;
 
   static const int res = 3;
-  static const double targetRadius = 700;
+  static const double targetRadius = 600;
 
   /// draw triangle parameters.
   List<double> vertices = <double>[];
@@ -92,7 +95,7 @@ class DrawTriangleGridScene extends GSprite {
   bool inited = false;
   double textureW = 0, textureH = 0;
 
-  DrawTriangleGridScene(this.image, {this.spring = 0.0025, this.stiff = 0.02, this.damp = 0.98, this.angle = 0});
+  DrawTriangleGridScene(this.image, this.mx, this.my, {this.spring = 0.0025, this.stiff = 0.02, this.damp = 0.98, this.angle = 0});
 
   @override
   Future<void> addedToStage() async {
@@ -172,7 +175,7 @@ class DrawTriangleGridScene extends GSprite {
     var scaleTo = stage!.stageHeight / th;
     container.y = 0;
     container.scale = 1.1;
-    container.x = (stage!.stageWidth - (tw * scaleTo)) / 2;
+    container.x = 0;
   }
 
   @override
@@ -197,8 +200,6 @@ class DrawTriangleGridScene extends GSprite {
     }
     triGrid.draw();
   }
-  var mx = 182;
-  var my = 346;
 
   void updatePoints() {
     // container.x = (sw - cols * sep) / 2;
